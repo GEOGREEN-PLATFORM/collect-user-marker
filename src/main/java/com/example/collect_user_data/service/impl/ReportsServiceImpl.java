@@ -4,12 +4,14 @@ import com.example.collect_user_data.entity.ReportsEntity;
 import com.example.collect_user_data.repository.ReportsRepository;
 import com.example.collect_user_data.service.ReportsService;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
 @Service
+@RequiredArgsConstructor
 public class ReportsServiceImpl implements ReportsService {
 
     @Autowired
@@ -17,11 +19,10 @@ public class ReportsServiceImpl implements ReportsService {
 
     @Override
     @Transactional
-    public void saveNewReport(ReportsEntity reportEntity) {
+    public ReportsEntity saveNewReport(ReportsEntity reportEntity) {
         reportEntity.setStatus("NEW");
         reportEntity.setCreateDate(LocalDate.now());
 
-        ReportsEntity savedReport = reportsRepository.save(reportEntity);
-        System.out.println("Saved report with id: " + savedReport.getId());
+        return reportsRepository.save(reportEntity);
     }
 }

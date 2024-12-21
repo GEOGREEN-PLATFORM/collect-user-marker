@@ -18,8 +18,7 @@ public class ReportsController {
     private final ReportsService reportsService;
 
     @PostMapping
-    public String saveNewReport(@RequestBody ReportsEntity reportEntity) {
-        reportsService.saveNewReport(reportEntity);
-        return "Report was saved successfully!";
+    public ReportsEntity saveNewReport(@RequestBody ReportsEntity reportEntity) {
+        return reportsService.saveNewReport(reportEntity);
     }
 }
