@@ -62,4 +62,9 @@ public class ReportsEntity {
     @Column
     private boolean hogweed;
 
+    @Column
+    @FutureOrPresent
+    @NotNull
+    private LocalDate updateDate;
+
 }
