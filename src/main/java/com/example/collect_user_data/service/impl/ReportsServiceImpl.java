@@ -7,6 +7,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Service
 public class ReportsServiceImpl implements ReportsService {
 
@@ -16,7 +18,10 @@ public class ReportsServiceImpl implements ReportsService {
     @Override
     @Transactional
     public void saveNewReport(ReportsEntity reportEntity) {
-        ReportsEntity newReport = reportsRepository.save(reportEntity);
-        System.out.println("Saved report with id: " + newReport.getId());
+        reportEntity.setStatus("NEW");
+        reportEntity.setCreateDate(LocalDate.now());
+
+        ReportsEntity savedReport = reportsRepository.save(reportEntity);
+        System.out.println("Saved report with id: " + savedReport.getId());
     }
 }
