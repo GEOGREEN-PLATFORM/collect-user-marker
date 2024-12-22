@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name = "UserReports", schema = "collected-user-data-schema")
+@Table(name = "UserReports")
 @Data
 public class ReportsEntity {
 
@@ -64,7 +64,6 @@ public class ReportsEntity {
 
     @Column
     @FutureOrPresent
-    @NotNull
     private LocalDate updateDate;
 
 }

@@ -1,0 +1,1 @@
+create database collected_user_data;
