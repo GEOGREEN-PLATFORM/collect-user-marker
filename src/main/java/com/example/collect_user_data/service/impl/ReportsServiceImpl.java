@@ -7,6 +7,8 @@ import com.example.collect_user_data.repository.ReportsRepository;
 import com.example.collect_user_data.service.ReportsService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,23 +22,25 @@ public class ReportsServiceImpl implements ReportsService {
     @Autowired
     private ReportsRepository reportsRepository;
 
+    private static final Logger logger = LoggerFactory.getLogger(ReportsServiceImpl.class);
+
     @Override
     @Transactional
     public ReportsEntity saveNewReport(ReportsEntity reportEntity) {
         reportEntity.setStatus("НОВАЯ");
         reportEntity.setCreateDate(LocalDate.now());
 
+        logger.debug("Сохранена новая заявка: {}", reportEntity);
+
         return reportsRepository.save(reportEntity);
     }
 
     @Override
-    @Transactional
     public List<ReportsEntity> getAllReports() {
         return reportsRepository.findAll();
     }
 
     @Override
-    @Transactional
     public ReportsEntity getReportById(Long id) {
         return reportsRepository.findById(id).orElseThrow(
                 () -> new ReportNotFoundException(id)
@@ -49,6 +53,7 @@ public class ReportsServiceImpl implements ReportsService {
         ReportsEntity oldReport = getReportById(id);
         if (oldReport.equals(newReport))
         {
+            logger.debug("Данные по заявке с айди {} успешно обновлены", id);
             newReport.setUpdateDate(LocalDate.now());
             reportsRepository.save(newReport);
         }
