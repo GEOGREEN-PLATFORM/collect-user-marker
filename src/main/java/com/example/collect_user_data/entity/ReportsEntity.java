@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -43,7 +44,7 @@ public class ReportsEntity {
 
     @Column
     @NotBlank
-    @Pattern(regexp = "NEW|ANALYSIS|PAUSED|PROCESSED", message = "Status must be one of: NEW, ANALYSIS, PAUSED, PROCESSED")
+    @Pattern(regexp = "НОВАЯ|НА АНАЛИЗЕ|ЗАКРЫТА", message = "Status must be one of: НОВАЯ, НА АНАЛИЗЕ, ЗАКРЫТА")
     private String status;
 
     @Column
@@ -65,5 +66,21 @@ public class ReportsEntity {
     @Column
     @FutureOrPresent
     private LocalDate updateDate;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ReportsEntity report = (ReportsEntity) o;
+
+        return Objects.equals(x, report.x) &&
+                Objects.equals(y, report.y) &&
+                Objects.equals(userEmail, report.userEmail) &&
+                Objects.equals(createDate, report.createDate) &&
+                Objects.equals(userPhone, report.userPhone) &&
+                Objects.equals(userComment, report.userComment);
+    }
 
 }
