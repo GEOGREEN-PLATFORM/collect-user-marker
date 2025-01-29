@@ -11,7 +11,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "UserReports")
 @Data
-public class ReportsEntity {
+public class UserMarkerEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_generator")
@@ -73,7 +73,7 @@ public class ReportsEntity {
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        ReportsEntity report = (ReportsEntity) o;
+        UserMarkerEntity report = (UserMarkerEntity) o;
 
         return Objects.equals(x, report.x) &&
                 Objects.equals(y, report.y) &&

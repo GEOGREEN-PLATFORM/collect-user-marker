@@ -1,10 +1,10 @@
 package com.example.collect_user_data.service.impl;
 
-import com.example.collect_user_data.entity.ReportsEntity;
+import com.example.collect_user_data.entity.UserMarkerEntity;
 import com.example.collect_user_data.exception.custom.IncorrectUpdateException;
 import com.example.collect_user_data.exception.custom.ReportNotFoundException;
-import com.example.collect_user_data.repository.ReportsRepository;
-import com.example.collect_user_data.service.ReportsService;
+import com.example.collect_user_data.repository.UserMarkerRepository;
+import com.example.collect_user_data.service.UserMarkerService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -17,45 +17,45 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ReportsServiceImpl implements ReportsService {
+public class UserMarkerServiceImpl implements UserMarkerService {
 
     @Autowired
-    private ReportsRepository reportsRepository;
+    private UserMarkerRepository userMarkerRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(ReportsServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserMarkerServiceImpl.class);
 
     @Override
     @Transactional
-    public ReportsEntity saveNewReport(ReportsEntity reportEntity) {
+    public UserMarkerEntity saveNewReport(UserMarkerEntity reportEntity) {
         reportEntity.setStatus("НОВАЯ");
         reportEntity.setCreateDate(LocalDate.now());
 
         logger.debug("Сохранена новая заявка: {}", reportEntity);
 
-        return reportsRepository.save(reportEntity);
+        return userMarkerRepository.save(reportEntity);
     }
 
     @Override
-    public List<ReportsEntity> getAllReports() {
-        return reportsRepository.findAll();
+    public List<UserMarkerEntity> getAllReports() {
+        return userMarkerRepository.findAll();
     }
 
     @Override
-    public ReportsEntity getReportById(Long id) {
-        return reportsRepository.findById(id).orElseThrow(
+    public UserMarkerEntity getReportById(Long id) {
+        return userMarkerRepository.findById(id).orElseThrow(
                 () -> new ReportNotFoundException(id)
         );
     }
 
     @Override
     @Transactional
-    public ReportsEntity updateReport(ReportsEntity newReport, Long id) {
-        ReportsEntity oldReport = getReportById(id);
+    public UserMarkerEntity updateReport(UserMarkerEntity newReport, Long id) {
+        UserMarkerEntity oldReport = getReportById(id);
         if (oldReport.equals(newReport))
         {
             logger.debug("Данные по заявке с айди {} успешно обновлены", id);
             newReport.setUpdateDate(LocalDate.now());
-            reportsRepository.save(newReport);
+            userMarkerRepository.save(newReport);
         }
         else {
             throw new IncorrectUpdateException(id);
