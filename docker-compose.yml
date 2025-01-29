@@ -11,12 +11,12 @@ services:
       - service-db
     environment:
       - SERVER_PORT= 8181
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://service-db/collected_user_data
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://service-db/collected_user_markers
 
   service-db:
     image: postgres:14.7-alpine
     environment:
-      POSTGRES_USER: collected-user-data-admin
+      POSTGRES_USER: collected-user-marker-admin
       POSTGRES_PASSWORD: qwe123
     ports:
       - "15432:5432"

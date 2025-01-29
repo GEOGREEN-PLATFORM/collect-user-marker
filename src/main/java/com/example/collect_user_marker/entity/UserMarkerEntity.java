@@ -1,4 +1,4 @@
-package com.example.collect_user_data.entity;
+package com.example.collect_user_marker.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -9,13 +9,13 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "UserReports")
+@Table(name = "UserMarkers")
 @Data
 public class UserMarkerEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_generator")
-    @SequenceGenerator(name = "id_generator", sequenceName = "user_reports_seq", allocationSize = 1)
+    @SequenceGenerator(name = "id_generator", sequenceName = "user_markers_seq", allocationSize = 1)
     private Long id;
 
     // TODO валидация координат, когда будет понятно, как они выглядят

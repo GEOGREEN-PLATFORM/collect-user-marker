@@ -1,10 +1,10 @@
-package com.example.collect_user_data.service.impl;
+package com.example.collect_user_marker.service.impl;
 
-import com.example.collect_user_data.entity.UserMarkerEntity;
-import com.example.collect_user_data.exception.custom.IncorrectUpdateException;
-import com.example.collect_user_data.exception.custom.ReportNotFoundException;
-import com.example.collect_user_data.repository.UserMarkerRepository;
-import com.example.collect_user_data.service.UserMarkerService;
+import com.example.collect_user_marker.entity.UserMarkerEntity;
+import com.example.collect_user_marker.exception.custom.IncorrectUpdateException;
+import com.example.collect_user_marker.exception.custom.ReportNotFoundException;
+import com.example.collect_user_marker.repository.UserMarkerRepository;
+import com.example.collect_user_marker.service.UserMarkerService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

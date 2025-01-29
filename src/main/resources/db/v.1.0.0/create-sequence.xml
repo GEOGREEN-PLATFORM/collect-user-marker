@@ -9,7 +9,7 @@
     <changeSet id="create-sequence" author="Egor">
         <createSequence
                 schemaName="public"
-                sequenceName="user_reports_seq"
+                sequenceName="user_markers_seq"
                 startValue="10"
                 incrementBy="1"
                 type="BIGINT"/>

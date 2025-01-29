@@ -1,6 +1,6 @@
-package com.example.collect_user_data.service;
+package com.example.collect_user_marker.service;
 
-import com.example.collect_user_data.entity.UserMarkerEntity;
+import com.example.collect_user_marker.entity.UserMarkerEntity;
 
 import java.util.List;
 

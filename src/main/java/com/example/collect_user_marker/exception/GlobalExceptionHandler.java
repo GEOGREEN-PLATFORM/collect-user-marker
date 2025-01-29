@@ -1,8 +1,8 @@
-package com.example.collect_user_data.exception;
+package com.example.collect_user_marker.exception;
 
-import com.example.collect_user_data.entity.ResponseErrorDTO;
-import com.example.collect_user_data.exception.custom.IncorrectUpdateException;
-import com.example.collect_user_data.exception.custom.ReportNotFoundException;
+import com.example.collect_user_marker.entity.ResponseErrorDTO;
+import com.example.collect_user_marker.exception.custom.IncorrectUpdateException;
+import com.example.collect_user_marker.exception.custom.ReportNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

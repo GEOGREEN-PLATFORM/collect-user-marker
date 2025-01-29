@@ -1,7 +1,7 @@
-package com.example.collect_user_data.controller;
+package com.example.collect_user_marker.controller;
 
-import com.example.collect_user_data.entity.UserMarkerEntity;
-import com.example.collect_user_data.service.UserMarkerService;
+import com.example.collect_user_marker.entity.UserMarkerEntity;
+import com.example.collect_user_marker.service.UserMarkerService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -4,9 +4,9 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet logicalFilePath="create-table-user-reports"
-               id="create-table-user-reports" author="Egor">
-        <createTable tableName="user_reports">
+    <changeSet logicalFilePath="create-table-user-markers"
+               id="create-table-user-markers" author="Egor">
+        <createTable tableName="user_markers">
             <column name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
