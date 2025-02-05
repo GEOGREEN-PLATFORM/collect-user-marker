@@ -1,6 +1,7 @@
 package com.example.collect_user_marker.exception;
 
-import com.example.collect_user_marker.entity.ResponseErrorDTO;
+import com.example.collect_user_marker.exception.custom.IncorrectDataException;
+import com.example.collect_user_marker.model.ResponseErrorDTO;
 import com.example.collect_user_marker.exception.custom.IncorrectUpdateException;
 import com.example.collect_user_marker.exception.custom.ReportNotFoundException;
 import org.slf4j.Logger;
@@ -34,6 +35,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({ IncorrectUpdateException.class })
     public ResponseErrorDTO catchIncorrectUpdateException(IncorrectUpdateException e) {
+        logger.error("Произошла ошибка: {}", e.getMessage(), e);
+        return new ResponseErrorDTO(
+                HttpStatus.BAD_REQUEST,
+                e.getMessage()
+        );
+    }
+
+    @ExceptionHandler({ IncorrectDataException.class })
+    public ResponseErrorDTO catchIncorrectDataException(IncorrectDataException e) {
         logger.error("Произошла ошибка: {}", e.getMessage(), e);
         return new ResponseErrorDTO(
                 HttpStatus.BAD_REQUEST,

@@ -1,16 +1,18 @@
 package com.example.collect_user_marker.service;
 
 import com.example.collect_user_marker.entity.UserMarkerEntity;
+import com.example.collect_user_marker.model.UserMarkerDTO;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface UserMarkerService {
 
-    UserMarkerEntity saveNewReport(UserMarkerEntity userMarkerEntity);
+    UserMarkerEntity saveNewReport(UserMarkerDTO userMarkerDTO);
 
     List<UserMarkerEntity> getAllReports();
 
-    UserMarkerEntity getReportById(Long id);
+    UserMarkerEntity getReportById(UUID id);
 
-    UserMarkerEntity updateReport(UserMarkerEntity report, Long id);
+    UserMarkerEntity updateReport(UserMarkerDTO userMarkerDTO, UUID id);
 }

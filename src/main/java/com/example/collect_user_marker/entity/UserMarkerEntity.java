@@ -2,23 +2,24 @@ package com.example.collect_user_marker.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.*;
+import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "UserMarkers")
+@Table(name = "user_markers")
 @Data
 public class UserMarkerEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_generator")
-    @SequenceGenerator(name = "id_generator", sequenceName = "user_markers_seq", allocationSize = 1)
-    private Long id;
+    @GeneratedValue(generator = "uuid-generator")
+    @Column(columnDefinition = "uuid", updatable = false, nullable = false)
+    @NotNull
+    private UUID id;
 
-    // TODO валидация координат, когда будет понятно, как они выглядят
     @Column
     @NotNull
     private Double x;
@@ -27,45 +28,45 @@ public class UserMarkerEntity {
     @NotNull
     private Double y;
 
-    @Column
-    @Size(max=12)
+    @Column(name = "user_phone")
+    @Size(max = 12)
     private String userPhone;
 
-    @Column
+    @Column(name = "user_email")
     @Email
     private String userEmail;
 
-    @Column
-    @Size(max=256)
+    @Column(name = "user_comment")
+    @Size(max = 256)
     private String userComment;
 
-    @Column
-    private UUID photoId;
+    @Column(name = "images", columnDefinition = "uuid[]")
+    private List<UUID> images;
 
     @Column
     @NotBlank
     @Pattern(regexp = "НОВАЯ|НА АНАЛИЗЕ|ЗАКРЫТА", message = "Status must be one of: НОВАЯ, НА АНАЛИЗЕ, ЗАКРЫТА")
     private String status;
 
-    @Column
-    @DecimalMax("100.00")
-    private Double prediction;
-
-    @Column
+    @Column(name = "create_date")
     @FutureOrPresent
     @NotNull
     private LocalDate createDate;
 
-    @Column
-    @Size(max=256)
+    @Column(name = "operator_comment")
+    @Size(max = 256)
     private String operatorComment;
 
-    @Column
-    private boolean hogweed;
+    @Column(name = "photo_verification")
+    private boolean photoVerification;
 
-    @Column
+    @Column(name = "update_date")
     @FutureOrPresent
     private LocalDate updateDate;
+
+    @Column(name = "problem_area_type")
+    @Pattern(regexp = "Борщевик|Пожар|Свалка", message = "Status must be one of: Борщевик, Пожар, Свалка")
+    private String problemAreaType;
 
     @Override
     public boolean equals(Object o) {
@@ -78,9 +79,7 @@ public class UserMarkerEntity {
         return Objects.equals(x, report.x) &&
                 Objects.equals(y, report.y) &&
                 Objects.equals(userEmail, report.userEmail) &&
-                Objects.equals(createDate, report.createDate) &&
                 Objects.equals(userPhone, report.userPhone) &&
                 Objects.equals(userComment, report.userComment);
     }
-
 }

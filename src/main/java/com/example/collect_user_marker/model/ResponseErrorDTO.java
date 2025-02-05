@@ -1,4 +1,4 @@
-package com.example.collect_user_marker.entity;
+package com.example.collect_user_marker.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
