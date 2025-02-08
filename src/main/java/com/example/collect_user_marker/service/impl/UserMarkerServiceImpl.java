@@ -4,7 +4,9 @@ import com.example.collect_user_marker.entity.UserMarkerEntity;
 import com.example.collect_user_marker.exception.custom.IncorrectDataException;
 import com.example.collect_user_marker.exception.custom.IncorrectUpdateException;
 import com.example.collect_user_marker.exception.custom.ReportNotFoundException;
+import com.example.collect_user_marker.feignClient.FeignClientService;
 import com.example.collect_user_marker.model.UserMarkerDTO;
+import com.example.collect_user_marker.model.photoAnalyse.PhotoDTO;
 import com.example.collect_user_marker.repository.UserMarkerRepository;
 import com.example.collect_user_marker.service.UserMarkerService;
 import jakarta.transaction.Transactional;
@@ -25,6 +27,9 @@ public class UserMarkerServiceImpl implements UserMarkerService {
     @Autowired
     private UserMarkerRepository userMarkerRepository;
 
+    @Autowired
+    private final FeignClientService feignClientService;
+
     private static final Logger logger = LoggerFactory.getLogger(UserMarkerServiceImpl.class);
 
     @Override
@@ -32,8 +37,18 @@ public class UserMarkerServiceImpl implements UserMarkerService {
     public UserMarkerEntity saveNewReport(UserMarkerDTO userMarkerDTO) {
         UserMarkerEntity userMarkerEntity = toEntity(userMarkerDTO);
 
-        logger.debug("Сохранена новая заявка: {}", userMarkerEntity);
+        List<UUID> photoIds = userMarkerEntity.getImages();
+        Boolean analyseResult = false;
 
+        for (UUID photoId : photoIds) {
+            if (analyseResult)
+                break;
+            analyseResult = feignClientService.analyse(new PhotoDTO(photoId)).getIsHogweed();
+        }
+
+        userMarkerEntity.setPhotoVerification(analyseResult);
+
+        logger.debug("Сохранена новая заявка: {}", userMarkerEntity);
         return userMarkerRepository.save(userMarkerEntity);
     }
 
