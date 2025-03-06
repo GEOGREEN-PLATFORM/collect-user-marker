@@ -1,1 +1,1 @@
-create database collcted_usere_markers;
+create database collected_user_markers;
