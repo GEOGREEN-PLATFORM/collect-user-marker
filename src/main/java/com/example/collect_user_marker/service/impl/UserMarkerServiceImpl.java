@@ -7,6 +7,7 @@ import com.example.collect_user_marker.exception.custom.ReportNotFoundException;
 import com.example.collect_user_marker.feignClient.FeignClientService;
 import com.example.collect_user_marker.model.UserMarkerDTO;
 import com.example.collect_user_marker.model.photoAnalyse.PhotoDTO;
+import com.example.collect_user_marker.repository.StatusRepository;
 import com.example.collect_user_marker.repository.UserMarkerRepository;
 import com.example.collect_user_marker.service.UserMarkerService;
 import jakarta.transaction.Transactional;
@@ -26,6 +27,9 @@ public class UserMarkerServiceImpl implements UserMarkerService {
 
     @Autowired
     private UserMarkerRepository userMarkerRepository;
+
+    @Autowired
+    private StatusRepository statusRepository;
 
     @Autowired
     private final FeignClientService feignClientService;
@@ -71,9 +75,9 @@ public class UserMarkerServiceImpl implements UserMarkerService {
         UserMarkerEntity oldReport = getReportById(id);
         if (oldReport.equals(newReport))
         {
-            logger.debug("Данные по заявке с айди {} успешно обновлены", id);
             newReport.setUpdateDate(LocalDate.now());
             userMarkerRepository.save(newReport);
+            logger.debug("Данные по заявке с айди {} успешно обновлены", id);
         }
         else {
             throw new IncorrectUpdateException(id);
@@ -107,8 +111,15 @@ public class UserMarkerServiceImpl implements UserMarkerService {
         }
 
         if (dto.getOperatorDetails() != null) {
-            entity.setStatus(dto.getOperatorDetails().getStatus() != null ? dto.getOperatorDetails().getStatus() : "НОВАЯ");
             entity.setOperatorComment(dto.getOperatorDetails().getOperatorComment() != null ? dto.getOperatorDetails().getOperatorComment() : "");
+            if (dto.getOperatorDetails().getStatusCode() != null) {
+                entity.setStatus(statusRepository.findByCode(dto.getOperatorDetails().getStatusCode()));
+            }
+            else {
+
+                entity.setStatus(statusRepository.findDefaultStatus());
+            }
+
         }
 
         entity.setCreateDate(LocalDate.now());

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet logicalFilePath="modify-table-status"
+               id="modify-table-status" author="Egor">
+
+        <createTable tableName="status">
+            <column name="id" type="SERIAL">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+
+            <column name="code" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <column name="description" type="VARCHAR(255)"/>
+
+            <column name="is_default" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+    </changeSet>
+
+    <changeSet id="add-default-status" author="Egor">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM status WHERE is_default = true
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="status">
+            <column name="code" value="СОЗДАНО"/>
+            <column name="description" value="Пользовательское обращение создано"/>
+            <column name="is_default" valueBoolean="true"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="add-status-to-entity" author="Egor">
+        <addColumn tableName="user_markers">
+            <column name="status_code" type="VARCHAR(50)"/>
+        </addColumn>
+
+        <addForeignKeyConstraint
+                baseTableName="user_markers"
+                baseColumnNames="status_code"
+                referencedTableName="status"
+                referencedColumnNames="code"
+                constraintName="fk_entity_status_code"
+                onDelete="RESTRICT"
+                onUpdate="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

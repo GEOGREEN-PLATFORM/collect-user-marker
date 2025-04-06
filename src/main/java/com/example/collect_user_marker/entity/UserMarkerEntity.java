@@ -43,10 +43,9 @@ public class UserMarkerEntity {
     @Column(name = "images", columnDefinition = "uuid[]")
     private List<UUID> images;
 
-    @Column
-    @NotBlank
-    @Pattern(regexp = "НОВАЯ|НА АНАЛИЗЕ|ЗАКРЫТА", message = "Status must be one of: НОВАЯ, НА АНАЛИЗЕ, ЗАКРЫТА")
-    private String status;
+    @ManyToOne
+    @JoinColumn(name = "status_code", referencedColumnName = "code")
+    private StatusEntity status;
 
     @Column(name = "create_date")
     @FutureOrPresent

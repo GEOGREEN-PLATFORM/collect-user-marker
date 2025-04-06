@@ -28,10 +28,6 @@
 
             <column name="images" type="uuid[]"/>
 
-            <column name="status" type="varchar">
-                <constraints nullable="false"/>
-            </column>
-
             <column name="create_date" type="date">
                 <constraints nullable="false"/>
             </column>

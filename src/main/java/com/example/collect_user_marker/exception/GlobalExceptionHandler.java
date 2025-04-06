@@ -1,7 +1,7 @@
 package com.example.collect_user_marker.exception;
 
 import com.example.collect_user_marker.exception.custom.IncorrectDataException;
-import com.example.collect_user_marker.model.ResponseErrorDTO;
+import com.example.collect_user_marker.model.ResponseDTO;
 import com.example.collect_user_marker.exception.custom.IncorrectUpdateException;
 import com.example.collect_user_marker.exception.custom.ReportNotFoundException;
 import org.springframework.http.ResponseEntity;
@@ -17,36 +17,36 @@ public class GlobalExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
     @ExceptionHandler({ TransactionSystemException.class })
-    public ResponseEntity<ResponseErrorDTO> catchTransactionSystemException(TransactionSystemException e) {
+    public ResponseEntity<ResponseDTO> catchTransactionSystemException(TransactionSystemException e) {
         logger.error("Произошла ошибка: {}", e.getMessage(), e);
-        return new ResponseEntity<>(new ResponseErrorDTO(
+        return new ResponseEntity<>(new ResponseDTO(
                 HttpStatus.BAD_REQUEST,
                 e.getRootCause().getLocalizedMessage()), HttpStatus.BAD_REQUEST
         );
     }
 
     @ExceptionHandler({ ReportNotFoundException.class })
-    public ResponseEntity<ResponseErrorDTO> catchReportNotFoundException(ReportNotFoundException e) {
+    public ResponseEntity<ResponseDTO> catchReportNotFoundException(ReportNotFoundException e) {
         logger.error("Произошла ошибка: {}", e.getMessage(), e);
-        return new ResponseEntity<>(new ResponseErrorDTO(
+        return new ResponseEntity<>(new ResponseDTO(
                 HttpStatus.NOT_FOUND,
                 e.getMessage()), HttpStatus.NOT_FOUND
         );
     }
 
     @ExceptionHandler({ IncorrectUpdateException.class })
-    public ResponseEntity<ResponseErrorDTO> catchIncorrectUpdateException(IncorrectUpdateException e) {
+    public ResponseEntity<ResponseDTO> catchIncorrectUpdateException(IncorrectUpdateException e) {
         logger.error("Произошла ошибка: {}", e.getMessage(), e);
-        return new ResponseEntity<>(new ResponseErrorDTO(
+        return new ResponseEntity<>(new ResponseDTO(
                 HttpStatus.BAD_REQUEST,
                 e.getMessage()), HttpStatus.BAD_REQUEST
         );
     }
 
     @ExceptionHandler({ IncorrectDataException.class })
-    public ResponseEntity<ResponseErrorDTO> catchIncorrectDataException(IncorrectDataException e) {
+    public ResponseEntity<ResponseDTO> catchIncorrectDataException(IncorrectDataException e) {
         logger.error("Произошла ошибка: {}", e.getMessage(), e);
-        return new ResponseEntity<>(new ResponseErrorDTO(
+        return new ResponseEntity<>(new ResponseDTO(
                 HttpStatus.BAD_REQUEST,
                 e.getMessage()), HttpStatus.BAD_REQUEST
         );
