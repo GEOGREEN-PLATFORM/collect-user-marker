@@ -24,4 +24,15 @@
                 onUpdate="CASCADE"/>
     </changeSet>
 
+    <changeSet id="add-problem-to-entity" author="Egor">
+        <addColumn tableName="user_markers">
+            <column name="operator_name" type="VARCHAR(50)"/>
+        </addColumn>
+
+        <addColumn tableName="user_markers">
+            <column name="operator_id" type="uuid"/>
+        </addColumn>
+
+    </changeSet>
+
 </databaseChangeLog>

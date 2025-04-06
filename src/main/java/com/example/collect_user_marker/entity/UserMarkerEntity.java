@@ -63,6 +63,13 @@ public class UserMarkerEntity {
     @FutureOrPresent
     private LocalDate updateDate;
 
+    @Column(name = "operator_name")
+    @Size(max = 50)
+    private String operatorName;
+
+    @Column(name = "operator_id")
+    private UUID operatorId;
+
     @ManyToOne
     @JoinColumn(name = "problem_type", referencedColumnName = "code")
     private ProblemTypeEntity problemType;

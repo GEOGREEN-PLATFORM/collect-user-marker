@@ -94,6 +94,10 @@ public class UserMarkerServiceImpl implements UserMarkerService {
             }
         }
 
+        report.setOperatorId(operatorDetailsDTO.getOperatorId() != null ? operatorDetailsDTO.getOperatorId() : report.getOperatorId());
+        report.setOperatorName(operatorDetailsDTO.getOperatorId() != null ? "Иванов И.И." : report.getOperatorName());
+        // TODO запрашивать имя оператора у Даши
+
         userMarkerRepository.save(report);
         logger.debug("Данные по заявке с айди {} успешно обновлены", id);
 
@@ -133,6 +137,9 @@ public class UserMarkerServiceImpl implements UserMarkerService {
 
         entity.setOperatorComment("");
         entity.setStatus(statusRepository.findDefaultStatus());
+
+        entity.setOperatorId(null);
+        entity.setOperatorName(null);
 
         entity.setCreateDate(LocalDate.now());
         entity.setUpdateDate(LocalDate.now());
