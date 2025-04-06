@@ -6,6 +6,7 @@
 
     <include file="v.1.0.0/create-table-user-markers.xml" relativeToChangelogFile="true" />
     <include file="v.1.0.0/create-sequence.xml" relativeToChangelogFile="true"/>
-    <include file="v.1.0.0/create-table-status.xml" relativeToChangelogFile="true" />
+    <include file="v.1.1.0/create-table-status.xml" relativeToChangelogFile="true" />
+    <include file="v.1.1.0/update-table-user-makers.xml" relativeToChangelogFile="true" />
 
 </databaseChangeLog>
