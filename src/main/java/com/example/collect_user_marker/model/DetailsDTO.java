@@ -2,7 +2,6 @@ package com.example.collect_user_marker.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,9 +18,9 @@ public class DetailsDTO {
     private List<UUID> images;
 
     @NotNull
-    @Pattern(regexp = "Борщевик|Пожар|Свалка", message = "Тип проблемы должен быть одним из: Борщевик, Пожар, Свалка")
-    @Schema(description = "Тип экологической проблемы", allowableValues = {"Борщевик", "Пожар", "Свалка"})
-    private String problemAreaType;
+    @Size(max = 50)
+    @Schema(description = "Тип экологической проблемы", example = "Борщевик")
+    private String problemAreaCode;
 
     @Size(max = 256)
     @Schema(description = "Комментарий пользователя", example = "тут много борщевика")

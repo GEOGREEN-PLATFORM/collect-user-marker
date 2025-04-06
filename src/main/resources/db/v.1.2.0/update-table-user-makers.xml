@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet logicalFilePath="remove-problem-column-from-user-markers"
+               id="remove-problem-column-from-user-markers" author="Egor">
+        <dropColumn tableName="problem_area_type" columnName="status"/>
+    </changeSet>
+
+    <changeSet id="add-problem-to-entity" author="Egor">
+        <addColumn tableName="user_markers">
+            <column name="problem_type" type="VARCHAR(50)"/>
+        </addColumn>
+
+        <addForeignKeyConstraint
+                baseTableName="user_markers"
+                baseColumnNames="problem_type"
+                referencedTableName="problem_type"
+                referencedColumnNames="code"
+                constraintName="fk_entity_problem_type"
+                onDelete="RESTRICT"
+                onUpdate="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

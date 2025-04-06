@@ -1,14 +1,17 @@
 package com.example.collect_user_marker.service.impl;
 
+import com.example.collect_user_marker.entity.ProblemTypeEntity;
 import com.example.collect_user_marker.entity.StatusEntity;
 import com.example.collect_user_marker.entity.UserMarkerEntity;
 import com.example.collect_user_marker.exception.custom.IncorrectDataException;
+import com.example.collect_user_marker.exception.custom.ProblemNotFoundException;
 import com.example.collect_user_marker.exception.custom.ReportNotFoundException;
 import com.example.collect_user_marker.exception.custom.StatusNotFoundException;
 import com.example.collect_user_marker.feignClient.FeignClientService;
 import com.example.collect_user_marker.model.OperatorDetailsDTO;
 import com.example.collect_user_marker.model.UserMarkerDTO;
 import com.example.collect_user_marker.model.photoAnalyse.PhotoDTO;
+import com.example.collect_user_marker.repository.ProblemTypeRepository;
 import com.example.collect_user_marker.repository.StatusRepository;
 import com.example.collect_user_marker.repository.UserMarkerRepository;
 import com.example.collect_user_marker.service.UserMarkerService;
@@ -32,6 +35,9 @@ public class UserMarkerServiceImpl implements UserMarkerService {
 
     @Autowired
     private StatusRepository statusRepository;
+
+    @Autowired
+    private ProblemTypeRepository problemTypeRepository;
 
     @Autowired
     private final FeignClientService feignClientService;
@@ -105,9 +111,16 @@ public class UserMarkerServiceImpl implements UserMarkerService {
         entity.setY(dto.getCoordinate().get(1));
 
         try {
-            entity.setProblemAreaType(dto.getDetails().getProblemAreaType());
             entity.setUserComment(dto.getDetails().getComment() != null ? dto.getDetails().getComment() : "");
             entity.setImages(dto.getDetails().getImages() != null ? dto.getDetails().getImages() : List.of());
+
+            ProblemTypeEntity problemTypeEntity = problemTypeRepository.findByCode(dto.getDetails().getProblemAreaCode());
+            if (problemTypeEntity != null) {
+                entity.setProblemType(problemTypeEntity);
+            }
+            else {
+                throw new ProblemNotFoundException(dto.getDetails().getProblemAreaCode());
+            }
         }
         catch (NullPointerException e) {
             throw new IncorrectDataException(e.getMessage());

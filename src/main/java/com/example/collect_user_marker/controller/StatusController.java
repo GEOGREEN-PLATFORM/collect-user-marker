@@ -52,7 +52,7 @@ public class StatusController {
     @Operation(
             summary = "Получить статус по айди"
     )
-    public Optional<StatusEntity> getAllStatuses(@PathVariable @Parameter(description = "Уникальный айди статуса", required = true) Integer id){
+    public Optional<StatusEntity> getStatusById(@PathVariable @Parameter(description = "Уникальный айди статуса", required = true) Integer id){
         logger.info("Получен запрос GET /status/get/{}", id);
         return statusService.findStatusById(id);
     }
@@ -61,8 +61,8 @@ public class StatusController {
     @Operation(
             summary = "Удаление статуса"
     )
-
     public ResponseDTO deleteStatus(@PathVariable @Parameter(description = "Уникальный айди статуса", required = true) Integer id) {
+        logger.info("Получен запрос DELETE /status/{}", id);
         return statusService.deleteStatus(id);
     }
 }

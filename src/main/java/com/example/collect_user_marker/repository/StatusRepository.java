@@ -10,5 +10,5 @@ public interface StatusRepository extends JpaRepository<StatusEntity, Integer> {
     StatusEntity findByCode(String code);
     @Query("SELECT s FROM StatusEntity s WHERE s.isDefault = true")
     StatusEntity findDefaultStatus();
-    void deleteByCode(String code);
+
 }

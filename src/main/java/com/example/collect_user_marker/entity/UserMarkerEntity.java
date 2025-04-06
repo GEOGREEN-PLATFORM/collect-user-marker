@@ -63,9 +63,9 @@ public class UserMarkerEntity {
     @FutureOrPresent
     private LocalDate updateDate;
 
-    @Column(name = "problem_area_type")
-    @Pattern(regexp = "Борщевик|Пожар|Свалка", message = "Status must be one of: Борщевик, Пожар, Свалка")
-    private String problemAreaType;
+    @ManyToOne
+    @JoinColumn(name = "problem_type", referencedColumnName = "code")
+    private ProblemTypeEntity problemType;
 
     @Override
     public boolean equals(Object o) {
