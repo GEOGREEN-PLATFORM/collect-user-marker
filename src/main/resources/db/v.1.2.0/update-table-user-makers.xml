@@ -6,7 +6,7 @@
 
     <changeSet logicalFilePath="remove-problem-column-from-user-markers"
                id="remove-problem-column-from-user-markers" author="Egor">
-        <dropColumn tableName="problem_area_type" columnName="status"/>
+        <dropColumn tableName="user_markers" columnName="problem_area_type"/>
     </changeSet>
 
     <changeSet id="add-problem-to-entity" author="Egor">
@@ -24,7 +24,7 @@
                 onUpdate="CASCADE"/>
     </changeSet>
 
-    <changeSet id="add-problem-to-entity" author="Egor">
+    <changeSet id="add-operator-to-entity" author="Egor">
         <addColumn tableName="user_markers">
             <column name="operator_name" type="VARCHAR(50)"/>
         </addColumn>
