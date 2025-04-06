@@ -11,10 +11,10 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/status")
@@ -48,12 +48,21 @@ public class StatusController {
         return statusService.getAllStatuses();
     }
 
-    @DeleteMapping("/{statusCode}")
+    @GetMapping("/get/{id}")
+    @Operation(
+            summary = "Получить статус по айди"
+    )
+    public Optional<StatusEntity> getAllStatuses(@PathVariable @Parameter(description = "Уникальный айди статуса", required = true) Integer id){
+        logger.info("Получен запрос GET /status/get/{}", id);
+        return statusService.findStatusById(id);
+    }
+
+    @DeleteMapping("/{id}")
     @Operation(
             summary = "Удаление статуса"
     )
-    public ResponseDTO deleteStatus(@PathVariable @Parameter(description = "Название статуса", required = true) String statusCode) {
-        statusService.deleteStatus(statusCode);
-        return new ResponseDTO(HttpStatus.OK, "Статус удалён!");
+
+    public ResponseDTO deleteStatus(@PathVariable @Parameter(description = "Уникальный айди статуса", required = true) Integer id) {
+        return statusService.deleteStatus(id);
     }
 }

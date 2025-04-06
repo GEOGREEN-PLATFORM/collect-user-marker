@@ -1,10 +1,12 @@
 package com.example.collect_user_marker.service.impl;
 
+import com.example.collect_user_marker.entity.StatusEntity;
 import com.example.collect_user_marker.entity.UserMarkerEntity;
 import com.example.collect_user_marker.exception.custom.IncorrectDataException;
-import com.example.collect_user_marker.exception.custom.IncorrectUpdateException;
 import com.example.collect_user_marker.exception.custom.ReportNotFoundException;
+import com.example.collect_user_marker.exception.custom.StatusNotFoundException;
 import com.example.collect_user_marker.feignClient.FeignClientService;
+import com.example.collect_user_marker.model.OperatorDetailsDTO;
 import com.example.collect_user_marker.model.UserMarkerDTO;
 import com.example.collect_user_marker.model.photoAnalyse.PhotoDTO;
 import com.example.collect_user_marker.repository.StatusRepository;
@@ -70,19 +72,26 @@ public class UserMarkerServiceImpl implements UserMarkerService {
 
     @Override
     @Transactional
-    public UserMarkerEntity updateReport(UserMarkerDTO userMarkerDTO, UUID id) {
-        UserMarkerEntity newReport = toEntity(userMarkerDTO);
-        UserMarkerEntity oldReport = getReportById(id);
-        if (oldReport.equals(newReport))
-        {
-            newReport.setUpdateDate(LocalDate.now());
-            userMarkerRepository.save(newReport);
-            logger.debug("Данные по заявке с айди {} успешно обновлены", id);
+    public UserMarkerEntity updateReport(OperatorDetailsDTO operatorDetailsDTO, UUID id) {
+        UserMarkerEntity report = getReportById(id);
+        report.setUpdateDate(LocalDate.now());
+
+        report.setOperatorComment(operatorDetailsDTO.getOperatorComment() != null ? operatorDetailsDTO.getOperatorComment() : report.getOperatorComment());
+
+        if (operatorDetailsDTO.getStatusCode() != null) {
+            StatusEntity statusEntity = statusRepository.findByCode(operatorDetailsDTO.getStatusCode());
+            if (statusEntity != null) {
+                report.setStatus(statusEntity);
+            }
+            else {
+                throw new StatusNotFoundException(operatorDetailsDTO.getStatusCode());
+            }
         }
-        else {
-            throw new IncorrectUpdateException(id);
-        }
-        return newReport;
+
+        userMarkerRepository.save(report);
+        logger.debug("Данные по заявке с айди {} успешно обновлены", id);
+
+        return report;
     }
 
     private UserMarkerEntity toEntity(UserMarkerDTO dto) {
@@ -99,7 +108,6 @@ public class UserMarkerServiceImpl implements UserMarkerService {
             entity.setProblemAreaType(dto.getDetails().getProblemAreaType());
             entity.setUserComment(dto.getDetails().getComment() != null ? dto.getDetails().getComment() : "");
             entity.setImages(dto.getDetails().getImages() != null ? dto.getDetails().getImages() : List.of());
-
         }
         catch (NullPointerException e) {
             throw new IncorrectDataException(e.getMessage());
@@ -110,17 +118,8 @@ public class UserMarkerServiceImpl implements UserMarkerService {
             entity.setUserEmail(dto.getUserDetails().getUserEmail() != null ? dto.getUserDetails().getUserEmail() : "");
         }
 
-        if (dto.getOperatorDetails() != null) {
-            entity.setOperatorComment(dto.getOperatorDetails().getOperatorComment() != null ? dto.getOperatorDetails().getOperatorComment() : "");
-            if (dto.getOperatorDetails().getStatusCode() != null) {
-                entity.setStatus(statusRepository.findByCode(dto.getOperatorDetails().getStatusCode()));
-            }
-            else {
-
-                entity.setStatus(statusRepository.findDefaultStatus());
-            }
-
-        }
+        entity.setOperatorComment("");
+        entity.setStatus(statusRepository.findDefaultStatus());
 
         entity.setCreateDate(LocalDate.now());
         entity.setUpdateDate(LocalDate.now());

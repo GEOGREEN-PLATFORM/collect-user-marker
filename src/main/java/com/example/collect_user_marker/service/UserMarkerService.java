@@ -1,6 +1,7 @@
 package com.example.collect_user_marker.service;
 
 import com.example.collect_user_marker.entity.UserMarkerEntity;
+import com.example.collect_user_marker.model.OperatorDetailsDTO;
 import com.example.collect_user_marker.model.UserMarkerDTO;
 
 import java.util.List;
@@ -14,5 +15,5 @@ public interface UserMarkerService {
 
     UserMarkerEntity getReportById(UUID id);
 
-    UserMarkerEntity updateReport(UserMarkerDTO userMarkerDTO, UUID id);
+    UserMarkerEntity updateReport(OperatorDetailsDTO operatorDetailsDTO, UUID id);
 }

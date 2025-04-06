@@ -18,7 +18,7 @@ public class UserMarkerDTO {
     @NotEmpty
     private DetailsDTO details;
 
+    @NotEmpty
     private UserDetailsDTO userDetails;
 
-    private OperatorDetailsDTO operatorDetails;
 }

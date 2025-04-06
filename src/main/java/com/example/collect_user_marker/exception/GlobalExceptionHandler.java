@@ -1,6 +1,7 @@
 package com.example.collect_user_marker.exception;
 
 import com.example.collect_user_marker.exception.custom.IncorrectDataException;
+import com.example.collect_user_marker.exception.custom.StatusNotFoundException;
 import com.example.collect_user_marker.model.ResponseDTO;
 import com.example.collect_user_marker.exception.custom.IncorrectUpdateException;
 import com.example.collect_user_marker.exception.custom.ReportNotFoundException;
@@ -49,6 +50,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ResponseDTO(
                 HttpStatus.BAD_REQUEST,
                 e.getMessage()), HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler({ StatusNotFoundException.class })
+    public ResponseEntity<ResponseDTO> catchStatusNotFoundException(StatusNotFoundException e) {
+        logger.error("Произошла ошибка: {}", e.getMessage(), e);
+        return new ResponseEntity<>(new ResponseDTO(
+                HttpStatus.NOT_FOUND,
+                e.getMessage()), HttpStatus.NOT_FOUND
         );
     }
 }

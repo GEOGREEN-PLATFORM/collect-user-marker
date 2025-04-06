@@ -17,4 +17,6 @@ public class OperatorDetailsDTO {
     @Size(max = 256)
     @Schema(description = "Комментарий оператора", example = "тут много борщевика")
     private String operatorComment;
+
+
 }
