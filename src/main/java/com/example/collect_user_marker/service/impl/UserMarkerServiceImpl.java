@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -80,7 +80,7 @@ public class UserMarkerServiceImpl implements UserMarkerService {
     @Transactional
     public UserMarkerEntity updateReport(OperatorDetailsDTO operatorDetailsDTO, UUID id) {
         UserMarkerEntity report = getReportById(id);
-        report.setUpdateDate(LocalDate.now());
+        report.setUpdateDate(Instant.now());
 
         report.setOperatorComment(operatorDetailsDTO.getOperatorComment() != null ? operatorDetailsDTO.getOperatorComment() : report.getOperatorComment());
 
@@ -118,12 +118,12 @@ public class UserMarkerServiceImpl implements UserMarkerService {
             entity.setUserComment(dto.getDetails().getComment() != null ? dto.getDetails().getComment() : "");
             entity.setImages(dto.getDetails().getImages() != null ? dto.getDetails().getImages() : List.of());
 
-            ProblemTypeEntity problemTypeEntity = problemTypeRepository.findByCode(dto.getDetails().getProblemAreaCode());
+            ProblemTypeEntity problemTypeEntity = problemTypeRepository.findByCode(dto.getDetails().getProblemAreaType());
             if (problemTypeEntity != null) {
                 entity.setProblemType(problemTypeEntity);
             }
             else {
-                throw new ProblemNotFoundException(dto.getDetails().getProblemAreaCode());
+                throw new ProblemNotFoundException(dto.getDetails().getProblemAreaType());
             }
         }
         catch (NullPointerException e) {
@@ -141,8 +141,8 @@ public class UserMarkerServiceImpl implements UserMarkerService {
         entity.setOperatorId(null);
         entity.setOperatorName(null);
 
-        entity.setCreateDate(LocalDate.now());
-        entity.setUpdateDate(LocalDate.now());
+        entity.setCreateDate(Instant.now());
+        entity.setUpdateDate(Instant.now());
 
         return entity;
     }

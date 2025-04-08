@@ -20,7 +20,7 @@ public class DetailsDTO {
     @NotNull
     @Size(max = 50)
     @Schema(description = "Тип экологической проблемы", example = "Борщевик")
-    private String problemAreaCode;
+    private String problemAreaType;
 
     @Size(max = 256)
     @Schema(description = "Комментарий пользователя", example = "тут много борщевика")

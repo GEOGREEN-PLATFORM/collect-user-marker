@@ -1,10 +1,13 @@
 package com.example.collect_user_marker.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -50,7 +53,7 @@ public class UserMarkerEntity {
     @Column(name = "create_date")
     @FutureOrPresent
     @NotNull
-    private LocalDate createDate;
+    private Instant createDate;
 
     @Column(name = "operator_comment")
     @Size(max = 256)
@@ -61,7 +64,7 @@ public class UserMarkerEntity {
 
     @Column(name = "update_date")
     @FutureOrPresent
-    private LocalDate updateDate;
+    private Instant updateDate;
 
     @Column(name = "operator_name")
     @Size(max = 50)
