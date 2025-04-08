@@ -87,7 +87,7 @@ public class UserMarkerServiceImpl implements UserMarkerService {
         if (operatorDetailsDTO.getStatusCode() != null) {
             StatusEntity statusEntity = statusRepository.findByCode(operatorDetailsDTO.getStatusCode());
             if (statusEntity != null) {
-                report.setStatus(statusEntity);
+                report.setStatus(statusEntity.getCode());
             }
             else {
                 throw new StatusNotFoundException(operatorDetailsDTO.getStatusCode());
@@ -120,7 +120,7 @@ public class UserMarkerServiceImpl implements UserMarkerService {
 
             ProblemTypeEntity problemTypeEntity = problemTypeRepository.findByCode(dto.getDetails().getProblemAreaType());
             if (problemTypeEntity != null) {
-                entity.setProblemType(problemTypeEntity);
+                entity.setProblemAreaType(problemTypeEntity.getCode());
             }
             else {
                 throw new ProblemNotFoundException(dto.getDetails().getProblemAreaType());
@@ -136,7 +136,7 @@ public class UserMarkerServiceImpl implements UserMarkerService {
         }
 
         entity.setOperatorComment("");
-        entity.setStatus(statusRepository.findDefaultStatus());
+        entity.setStatus(statusRepository.findDefaultStatus().getCode());
 
         entity.setOperatorId(null);
         entity.setOperatorName(null);

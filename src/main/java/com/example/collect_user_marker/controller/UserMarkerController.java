@@ -58,7 +58,7 @@ public class UserMarkerController {
         return userMarkerService.getReportById(reportId);
     }
 
-    @PutMapping("/{reportId}")
+    @PatchMapping("/{reportId}")
     @Operation(
             summary = "Обновить информацио о маркере",
             description = "Позволяет обновить информацио о маркере"

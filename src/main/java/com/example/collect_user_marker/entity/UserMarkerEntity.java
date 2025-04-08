@@ -46,9 +46,8 @@ public class UserMarkerEntity {
     @Column(name = "images", columnDefinition = "uuid[]")
     private List<UUID> images;
 
-    @ManyToOne
     @JoinColumn(name = "status_code", referencedColumnName = "code")
-    private StatusEntity status;
+    private String status;
 
     @Column(name = "create_date")
     @FutureOrPresent
@@ -73,9 +72,8 @@ public class UserMarkerEntity {
     @Column(name = "operator_id")
     private UUID operatorId;
 
-    @ManyToOne
     @JoinColumn(name = "problem_type", referencedColumnName = "code")
-    private ProblemTypeEntity problemType;
+    private String problemAreaType;
 
     @Override
     public boolean equals(Object o) {

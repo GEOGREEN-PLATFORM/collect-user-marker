@@ -21,7 +21,7 @@ public interface UserMarkerRepository extends JpaRepository<UserMarkerEntity, UU
 
     @Transactional
     @Modifying
-    @Query("UPDATE UserMarkerEntity u SET u.problemType = :newProblem WHERE u.problemType = :oldProblem")
+    @Query("UPDATE UserMarkerEntity u SET u.problemAreaType = :newProblem WHERE u.problemAreaType = :oldProblem")
     int updateProblemForMarkers(ProblemTypeEntity oldProblem, ProblemTypeEntity newProblem);
 
 }
