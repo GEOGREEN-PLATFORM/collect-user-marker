@@ -111,8 +111,7 @@ public class UserMarkerServiceImpl implements UserMarkerService {
             throw new IncorrectDataException("Dont have X, Y or both coordinates");
         }
 
-        entity.setX(dto.getCoordinate().get(0));
-        entity.setY(dto.getCoordinate().get(1));
+        entity.setCoordinates(dto.getCoordinate());
 
         try {
             entity.setUserComment(dto.getDetails().getComment() != null ? dto.getDetails().getComment() : "");

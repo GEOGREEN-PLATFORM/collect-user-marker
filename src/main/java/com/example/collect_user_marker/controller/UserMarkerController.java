@@ -63,9 +63,9 @@ public class UserMarkerController {
             summary = "Обновить информацио о маркере",
             description = "Позволяет обновить информацио о маркере"
     )
-    public UserMarkerEntity updateReport(@RequestBody @Parameter(description = "статуса сообщения пользователя", required = true) OperatorDetailsDTO operatorDetailsDTO, @PathVariable @Parameter(description = "Айди пользовательского маркера", required = true, example = "7632b748-02bf-444b-bb95-1a4e6e1cffc5") UUID reportId){
+    public UserMarkerEntity updateReport(@RequestBody @Parameter(description = "статуса сообщения пользователя", required = true) OperatorDetailsDTO operatorDetailsDTO, @PathVariable @Parameter(description = "Айди пользовательского маркера", required = true, example = "7632b748-02bf-444b-bb95-1a4e6e1cffc5") String reportId){
         logger.info("Получен запрос PUT /{reportId} с айди: {}", reportId);
         logger.debug("PUT /{reportId}: {}", operatorDetailsDTO);
-        return userMarkerService.updateReport(operatorDetailsDTO, reportId);
+        return userMarkerService.updateReport(operatorDetailsDTO, UUID.fromString(reportId));
     }
 }

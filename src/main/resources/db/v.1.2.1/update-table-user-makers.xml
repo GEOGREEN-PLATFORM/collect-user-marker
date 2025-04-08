@@ -40,11 +40,23 @@
         <dropColumn tableName="user_markers" columnName="user_email"/>
 
         <addColumn tableName="user_markers">
-            <column name="user_id" type="varchar">
+            <column name="user_id" type="uuid">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
 
+    </changeSet>
+
+
+    <changeSet id="replace_xy_with_coordinates_array" author="Egor">
+        <addColumn tableName="user_markers">
+            <column name="coordinates" type="float8[]">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <dropColumn tableName="user_markers" columnName="x"/>
+        <dropColumn tableName="user_markers" columnName="y"/>
     </changeSet>
 
 </databaseChangeLog>

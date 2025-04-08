@@ -1,7 +1,6 @@
 package com.example.collect_user_marker.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -21,13 +20,9 @@ public class UserMarkerEntity {
     @NotNull
     private UUID id;
 
-    @Column
     @NotNull
-    private Double x;
-
-    @Column
-    @NotNull
-    private Double y;
+    @Column(name = "coordinates")
+    private List<Double> coordinates;
 
     @NotNull
     @Column(name = "user_id")
@@ -41,10 +36,10 @@ public class UserMarkerEntity {
     private List<UUID> images;
 
     @JoinColumn(name = "status_code", referencedColumnName = "code")
+    @Column(name = "status_code")
     private String status;
 
     @Column(name = "create_date")
-    @FutureOrPresent
     @NotNull
     private Instant createDate;
 
@@ -56,7 +51,6 @@ public class UserMarkerEntity {
     private boolean photoVerification;
 
     @Column(name = "update_date")
-    @FutureOrPresent
     private Instant updateDate;
 
     @Column(name = "operator_name")
@@ -67,6 +61,7 @@ public class UserMarkerEntity {
     private UUID operatorId;
 
     @JoinColumn(name = "problem_type", referencedColumnName = "code")
+    @Column(name = "problem_type")
     private String problemAreaType;
 
 }
