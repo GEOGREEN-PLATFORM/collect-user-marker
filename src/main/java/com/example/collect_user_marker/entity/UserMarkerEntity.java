@@ -1,7 +1,6 @@
 package com.example.collect_user_marker.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -9,7 +8,6 @@ import lombok.Data;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -31,13 +29,9 @@ public class UserMarkerEntity {
     @NotNull
     private Double y;
 
-    @Column(name = "user_phone")
-    @Size(max = 12)
-    private String userPhone;
-
-    @Column(name = "user_email")
-    @Email
-    private String userEmail;
+    @NotNull
+    @Column(name = "user_id")
+    private UUID userId;
 
     @Column(name = "user_comment")
     @Size(max = 256)
@@ -75,18 +69,4 @@ public class UserMarkerEntity {
     @JoinColumn(name = "problem_type", referencedColumnName = "code")
     private String problemAreaType;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-
-        if (o == null || getClass() != o.getClass()) return false;
-
-        UserMarkerEntity report = (UserMarkerEntity) o;
-
-        return Objects.equals(x, report.x) &&
-                Objects.equals(y, report.y) &&
-                Objects.equals(userEmail, report.userEmail) &&
-                Objects.equals(userPhone, report.userPhone) &&
-                Objects.equals(userComment, report.userComment);
-    }
 }

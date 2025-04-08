@@ -117,6 +117,7 @@ public class UserMarkerServiceImpl implements UserMarkerService {
         try {
             entity.setUserComment(dto.getDetails().getComment() != null ? dto.getDetails().getComment() : "");
             entity.setImages(dto.getDetails().getImages() != null ? dto.getDetails().getImages() : List.of());
+            entity.setUserId(dto.getDetails().getUserId());
 
             ProblemTypeEntity problemTypeEntity = problemTypeRepository.findByCode(dto.getDetails().getProblemAreaType());
             if (problemTypeEntity != null) {
@@ -128,11 +129,6 @@ public class UserMarkerServiceImpl implements UserMarkerService {
         }
         catch (NullPointerException e) {
             throw new IncorrectDataException(e.getMessage());
-        }
-
-        if (dto.getUserDetails() != null) {
-            entity.setUserPhone(dto.getUserDetails().getUserPhone() != null ? dto.getUserDetails().getUserPhone() : "");
-            entity.setUserEmail(dto.getUserDetails().getUserEmail() != null ? dto.getUserDetails().getUserEmail() : "");
         }
 
         entity.setOperatorComment("");

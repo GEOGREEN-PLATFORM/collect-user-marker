@@ -34,4 +34,17 @@
                 newColumnName="update_date"/>
     </changeSet>
 
+    <changeSet id="remove_user_data" author="Egor">
+
+        <dropColumn tableName="user_markers" columnName="user_phone"/>
+        <dropColumn tableName="user_markers" columnName="user_email"/>
+
+        <addColumn tableName="user_markers">
+            <column name="user_id" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+    </changeSet>
+
 </databaseChangeLog>
