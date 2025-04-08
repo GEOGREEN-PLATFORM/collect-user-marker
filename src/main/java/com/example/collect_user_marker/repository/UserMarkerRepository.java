@@ -17,11 +17,11 @@ public interface UserMarkerRepository extends JpaRepository<UserMarkerEntity, UU
     @Transactional
     @Modifying
     @Query("UPDATE UserMarkerEntity u SET u.status = :newStatus WHERE u.status = :oldStatus")
-    int updateStatusForMarkers(StatusEntity oldStatus, StatusEntity newStatus);
+    int updateStatusForMarkers(String oldStatus, String newStatus);
 
     @Transactional
     @Modifying
     @Query("UPDATE UserMarkerEntity u SET u.problemAreaType = :newProblem WHERE u.problemAreaType = :oldProblem")
-    int updateProblemForMarkers(ProblemTypeEntity oldProblem, ProblemTypeEntity newProblem);
+    int updateProblemForMarkers(String oldProblem, String newProblem);
 
 }

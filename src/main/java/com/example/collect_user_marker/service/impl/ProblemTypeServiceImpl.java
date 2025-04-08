@@ -58,7 +58,7 @@ public class ProblemTypeServiceImpl implements ProblemTypeService {
             }
             else {
                 ProblemTypeEntity defaultProblem = problemTypeRepository.findDefaultProblem();
-                int updateCount = userMarkerRepository.updateProblemForMarkers(problemTypeEntity.get(), defaultProblem);
+                int updateCount = userMarkerRepository.updateProblemForMarkers(problemTypeEntity.get().getCode(), defaultProblem.getCode());
 
                 problemTypeRepository.deleteById(id);
                 response = new ResponseDTO(HttpStatus.OK, "Проблема удалена!");

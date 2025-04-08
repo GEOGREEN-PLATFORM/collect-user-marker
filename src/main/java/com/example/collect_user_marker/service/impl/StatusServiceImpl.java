@@ -59,7 +59,7 @@ public class StatusServiceImpl implements StatusService {
             }
             else {
                 StatusEntity defaultStatus = statusRepository.findDefaultStatus();
-                int updateCount = userMarkerRepository.updateStatusForMarkers(statusEntity.get(), defaultStatus);
+                int updateCount = userMarkerRepository.updateStatusForMarkers(statusEntity.get().getCode(), defaultStatus.getCode());
 
                 statusRepository.deleteById(id);
                 response = new ResponseDTO(HttpStatus.OK, "Статус удалён!");
