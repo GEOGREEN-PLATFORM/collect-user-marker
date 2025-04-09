@@ -25,7 +25,11 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="add-default-status" author="Egor">
+    <changeSet logicalFilePath="clear-table-status" id="clear-table-status" author="Egor">
+        <sql>TRUNCATE TABLE status RESTART IDENTITY CASCADE;</sql>
+    </changeSet>
+
+    <changeSet id="add-default-statuses" author="Egor">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM status WHERE is_default = true
@@ -33,9 +37,21 @@
         </preConditions>
 
         <insert tableName="status">
-            <column name="code" value="СОЗДАНО"/>
-            <column name="description" value="Пользовательское обращение создано"/>
+            <column name="code" value="СОЗДАНА"/>
+            <column name="description" value="Заявка создана пользователем, отображается в списке заявок у сотрудника"/>
             <column name="is_default" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="status">
+            <column name="code" value="ОТКЛОНЕНА"/>
+            <column name="description" value="Заявка отклонена сотрудников, не отображается в списке, но есть в БД"/>
+            <column name="is_default" valueBoolean="false"/>
+        </insert>
+
+        <insert tableName="status">
+            <column name="code" value="ОДОБРЕНА"/>
+            <column name="description" value="Заявка одобрена сотрудником, не отображается в списке, есть в БД, автоматически заявка превращается в дефолтный очаг"/>
+            <column name="is_default" valueBoolean="false"/>
         </insert>
     </changeSet>
 
