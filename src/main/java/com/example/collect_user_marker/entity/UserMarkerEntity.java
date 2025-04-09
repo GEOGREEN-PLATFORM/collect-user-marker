@@ -1,9 +1,13 @@
 package com.example.collect_user_marker.entity;
 
+import com.example.collect_user_marker.converter.ImageListConverter;
+import com.example.collect_user_marker.model.image.ImageDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.List;
@@ -32,8 +36,10 @@ public class UserMarkerEntity {
     @Size(max = 256)
     private String userComment;
 
-    @Column(name = "images", columnDefinition = "uuid[]")
-    private List<UUID> images;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "images", columnDefinition = "jsonb")
+    @Convert(converter = ImageListConverter.class)
+    private List<ImageDTO> images;
 
     @JoinColumn(name = "status_code", referencedColumnName = "code")
     @Column(name = "status_code")

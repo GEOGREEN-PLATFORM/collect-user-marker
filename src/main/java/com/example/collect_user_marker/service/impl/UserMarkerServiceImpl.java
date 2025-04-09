@@ -10,6 +10,7 @@ import com.example.collect_user_marker.exception.custom.StatusNotFoundException;
 import com.example.collect_user_marker.feignClient.FeignClientService;
 import com.example.collect_user_marker.model.OperatorDetailsDTO;
 import com.example.collect_user_marker.model.UserMarkerDTO;
+import com.example.collect_user_marker.model.image.ImageDTO;
 import com.example.collect_user_marker.model.photoAnalyse.PhotoDTO;
 import com.example.collect_user_marker.repository.ProblemTypeRepository;
 import com.example.collect_user_marker.repository.StatusRepository;
@@ -49,13 +50,13 @@ public class UserMarkerServiceImpl implements UserMarkerService {
     public UserMarkerEntity saveNewReport(UserMarkerDTO userMarkerDTO) {
         UserMarkerEntity userMarkerEntity = toEntity(userMarkerDTO);
 
-        List<UUID> photoIds = userMarkerEntity.getImages();
+        List<ImageDTO> photoIds = userMarkerEntity.getImages();
         Boolean analyseResult = false;
 
-        for (UUID photoId : photoIds) {
+        for (ImageDTO photo : photoIds) {
             if (analyseResult)
                 break;
-            analyseResult = feignClientService.analyse(new PhotoDTO(photoId)).getIsHogweed();
+            analyseResult = feignClientService.analyse(new PhotoDTO(photo.getFullImageId())).getIsHogweed();
         }
 
         userMarkerEntity.setPhotoVerification(analyseResult);

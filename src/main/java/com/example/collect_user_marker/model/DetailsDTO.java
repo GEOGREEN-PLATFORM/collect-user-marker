@@ -1,5 +1,6 @@
 package com.example.collect_user_marker.model;
 
+import com.example.collect_user_marker.model.image.ImageDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -14,8 +15,8 @@ import java.util.UUID;
 @Schema(description = "Сущность деталей о сообщении пользователя")
 public class DetailsDTO {
 
-    @Schema(description = "Лист айди фотографий борщевика", example = "[7632b748-02bf-444b-bb95-1a4e6e1cffc5]")
-    private List<UUID> images;
+    @Schema(description = "Лист айди фотографий борщевика")
+    private List<ImageDTO> images;
 
     @NotNull
     @Size(max = 50)
