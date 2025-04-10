@@ -1,8 +1,9 @@
 package com.example.collect_user_marker.repository;
 
-import com.example.collect_user_marker.entity.ProblemTypeEntity;
-import com.example.collect_user_marker.entity.StatusEntity;
 import com.example.collect_user_marker.entity.UserMarkerEntity;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -23,5 +24,9 @@ public interface UserMarkerRepository extends JpaRepository<UserMarkerEntity, UU
     @Modifying
     @Query("UPDATE UserMarkerEntity u SET u.problemAreaType = :newProblem WHERE u.problemAreaType = :oldProblem")
     int updateProblemForMarkers(String oldProblem, String newProblem);
+
+    @Override
+    @NotNull
+    Page<UserMarkerEntity> findAll(@NotNull Pageable pageable);
 
 }

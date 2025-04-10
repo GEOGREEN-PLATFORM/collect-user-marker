@@ -11,9 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -43,9 +43,10 @@ public class UserMarkerController {
             summary = "Получить все маркеры",
             description = "Позволяет получить все пользовательские маркеры"
     )
-    public List<UserMarkerEntity> getAllReports(){
+    public Page<UserMarkerEntity> getAllReports(@RequestParam(defaultValue = "0") int page,
+                                                @RequestParam(defaultValue = "10") int size){
         logger.info("Получен запрос /getAll");
-        return userMarkerService.getAllReports();
+        return userMarkerService.getAllReports(page, size);
     }
 
     @GetMapping("/{reportId}")
