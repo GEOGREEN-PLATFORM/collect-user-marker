@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface UserMarkerService {
 
-    UserMarkerEntity saveNewReport(UserMarkerDTO userMarkerDTO);
+    UserMarkerEntity saveNewReport(UserMarkerDTO userMarkerDTO, String token);
 
     Page<UserMarkerEntity> getAllReports(int page, int size);
 

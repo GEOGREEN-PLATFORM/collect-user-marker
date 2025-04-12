@@ -50,7 +50,7 @@ public class UserMarkerServiceImpl implements UserMarkerService {
 
     @Override
     @Transactional
-    public UserMarkerEntity saveNewReport(UserMarkerDTO userMarkerDTO) {
+    public UserMarkerEntity saveNewReport(UserMarkerDTO userMarkerDTO, String token) {
         UserMarkerEntity userMarkerEntity = toEntity(userMarkerDTO);
 
         List<ImageDTO> photoIds = userMarkerEntity.getImages();
@@ -59,7 +59,7 @@ public class UserMarkerServiceImpl implements UserMarkerService {
         for (ImageDTO photo : photoIds) {
             if (analyseResult)
                 break;
-            analyseResult = feignClientService.analyse(new PhotoDTO(photo.getFullImageId())).getIsHogweed();
+            analyseResult = feignClientService.analyse(token, new PhotoDTO(photo.getFullImageId())).getIsHogweed();
         }
 
         userMarkerEntity.setPhotoVerification(analyseResult);

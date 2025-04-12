@@ -6,7 +6,9 @@ import com.example.collect_user_marker.model.UserMarkerDTO;
 import com.example.collect_user_marker.service.UserMarkerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.security.RolesAllowed;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,9 +18,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+import static com.example.collect_user_marker.util.AuthorizationStringUtil.*;
+
 @RestController
 @RequestMapping("/report")
 @RequiredArgsConstructor
+@SecurityRequirement(name = AUTHORIZATION)
 @Tag(name = "Пользовательские маркеры", description = "Позволяет раборать с пользовательскими сообщениями")
 public class UserMarkerController {
 
@@ -32,10 +37,10 @@ public class UserMarkerController {
             summary = "Создание нового маркера",
             description = "Записывает в базу данных новое пользовательское сообщение"
     )
-    public UserMarkerEntity saveNewReport(@RequestBody @Parameter(description = "Сущность пользовательского маркера", required = true) UserMarkerDTO userMarkerDTO) {
+    public UserMarkerEntity saveNewReport(@RequestHeader("Authorization") String token, @RequestBody @Parameter(description = "Сущность пользовательского маркера", required = true) UserMarkerDTO userMarkerDTO) {
         logger.info("Получен запрос POST /report по координатам: {}, {}", userMarkerDTO.getCoordinate().get(0), userMarkerDTO.getCoordinate().get(1));
         logger.debug("POST /report: {}", userMarkerDTO);
-        return userMarkerService.saveNewReport(userMarkerDTO);
+        return userMarkerService.saveNewReport(userMarkerDTO, token);
     }
 
     @GetMapping("/getAll")
@@ -43,6 +48,7 @@ public class UserMarkerController {
             summary = "Получить все маркеры",
             description = "Позволяет получить все пользовательские маркеры"
     )
+    @RolesAllowed({ADMIN, OPERATOR})
     public Page<UserMarkerEntity> getAllReports(@RequestParam(defaultValue = "0") int page,
                                                 @RequestParam(defaultValue = "10") int size){
         logger.info("Получен запрос /getAll");
@@ -54,6 +60,7 @@ public class UserMarkerController {
             summary = "Получить маркер по айди",
             description = "Позволяет получить маркер по айди"
     )
+    @RolesAllowed({ADMIN, OPERATOR})
     public UserMarkerEntity getReportById(@PathVariable @Parameter(description = "Айди пользовательского маркера", required = true, example = "7632b748-02bf-444b-bb95-1a4e6e1cffc5") UUID reportId){
         logger.info("Получен запрос GET /{reportId} с айди: {}", reportId);
         return userMarkerService.getReportById(reportId);
@@ -64,6 +71,7 @@ public class UserMarkerController {
             summary = "Обновить информацио о маркере",
             description = "Позволяет обновить информацио о маркере"
     )
+    @RolesAllowed({ADMIN, OPERATOR})
     public UserMarkerEntity updateReport(@RequestBody @Parameter(description = "статуса сообщения пользователя", required = true) OperatorDetailsDTO operatorDetailsDTO, @PathVariable @Parameter(description = "Айди пользовательского маркера", required = true, example = "7632b748-02bf-444b-bb95-1a4e6e1cffc5") String reportId){
         logger.info("Получен запрос PUT /{reportId} с айди: {}", reportId);
         logger.debug("PUT /{reportId}: {}", operatorDetailsDTO);
