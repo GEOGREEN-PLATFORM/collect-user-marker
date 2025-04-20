@@ -39,6 +39,12 @@
     </changeSet>
 
     <changeSet id="add-problem-types" author="Egor">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM problem_type WHERE code IN ('Борщевик', 'Пожар', 'Свалка');
+            </sqlCheck>
+        </preConditions>
+
         <insert tableName="problem_type">
             <column name="code" value="Борщевик"/>
             <column name="description" value="Зона распространения борщевика"/>

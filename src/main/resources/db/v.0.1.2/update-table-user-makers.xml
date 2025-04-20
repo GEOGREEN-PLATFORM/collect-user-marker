@@ -10,6 +10,12 @@
     </changeSet>
 
     <changeSet id="add-problem-to-entity" author="Egor">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="user_markers" columnName="problem_type"/>
+            </not>
+        </preConditions>
+
         <addColumn tableName="user_markers">
             <column name="problem_type" type="VARCHAR(50)"/>
         </addColumn>
@@ -25,9 +31,24 @@
     </changeSet>
 
     <changeSet id="add-operator-to-entity" author="Egor">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="user_markers" columnName="operator_name"/>
+            </not>
+        </preConditions>
+
         <addColumn tableName="user_markers">
             <column name="operator_name" type="VARCHAR(50)"/>
         </addColumn>
+
+    </changeSet>
+
+    <changeSet id="add-operator-id" author="Egor">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="user_markers" columnName="operator_id"/>
+            </not>
+        </preConditions>
 
         <addColumn tableName="user_markers">
             <column name="operator_id" type="uuid"/>

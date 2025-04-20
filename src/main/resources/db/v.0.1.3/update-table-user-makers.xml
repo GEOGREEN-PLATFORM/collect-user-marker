@@ -34,10 +34,31 @@
                 newColumnName="update_date"/>
     </changeSet>
 
-    <changeSet id="remove_user_data" author="Egor">
+    <changeSet id="remove_user_phone" author="Egor">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="user_markers" columnName="user_phone"/>
+        </preConditions>
 
         <dropColumn tableName="user_markers" columnName="user_phone"/>
+
+    </changeSet>
+
+
+    <changeSet id="remove_user_email" author="Egor">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="user_markers" columnName="user_email"/>
+        </preConditions>
+
         <dropColumn tableName="user_markers" columnName="user_email"/>
+
+    </changeSet>
+
+    <changeSet id="add_user_id" author="Egor">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="user_markers" columnName="user_id"/>
+            </not>
+        </preConditions>
 
         <addColumn tableName="user_markers">
             <column name="user_id" type="uuid">
@@ -49,6 +70,12 @@
 
 
     <changeSet id="replace_xy_with_coordinates_array" author="Egor">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="user_markers" columnName="coordinates"/>
+            </not>
+        </preConditions>
+
         <addColumn tableName="user_markers">
             <column name="coordinates" type="float8[]">
                 <constraints nullable="false"/>
