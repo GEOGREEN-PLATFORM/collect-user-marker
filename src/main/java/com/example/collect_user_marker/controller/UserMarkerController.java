@@ -15,8 +15,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.UUID;
 
 import static com.example.collect_user_marker.util.AuthorizationStringUtil.*;
@@ -50,10 +52,14 @@ public class UserMarkerController {
             description = "Позволяет получить все пользовательские маркеры"
     )
     @RolesAllowed({ADMIN, OPERATOR})
-    public SimplifiedPageResponse<UserMarkerEntity> getAllReports(@RequestParam(defaultValue = "0") int page,
-                                                @RequestParam(defaultValue = "10") int size){
+    public SimplifiedPageResponse<UserMarkerEntity> getAllReports(
+            @RequestParam(required = false) String problemType,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Instant startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Instant endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size){
         logger.info("Получен запрос /getAll");
-        Page<UserMarkerEntity> result = userMarkerService.getAllReports(page, size);
+        Page<UserMarkerEntity> result = userMarkerService.getAllReports(page, size, problemType, startDate, endDate);
         return new SimplifiedPageResponse<>(result);
     }
 

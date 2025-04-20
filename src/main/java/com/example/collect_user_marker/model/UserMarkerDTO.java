@@ -13,6 +13,7 @@ import java.util.List;
 public class UserMarkerDTO {
 
     @NotEmpty
+    @Schema(description = "Координаты очага", example = "[1.0, 2.0]")
     private List<Double> coordinate;
 
     @NotEmpty

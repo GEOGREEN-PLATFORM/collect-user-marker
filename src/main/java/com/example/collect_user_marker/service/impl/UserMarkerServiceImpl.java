@@ -3,6 +3,7 @@ package com.example.collect_user_marker.service.impl;
 import com.example.collect_user_marker.entity.ProblemTypeEntity;
 import com.example.collect_user_marker.entity.StatusEntity;
 import com.example.collect_user_marker.entity.UserMarkerEntity;
+import com.example.collect_user_marker.entity.spec.EntitySpecifications;
 import com.example.collect_user_marker.exception.custom.IncorrectDataException;
 import com.example.collect_user_marker.exception.custom.ProblemNotFoundException;
 import com.example.collect_user_marker.exception.custom.ReportNotFoundException;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -69,9 +71,12 @@ public class UserMarkerServiceImpl implements UserMarkerService {
     }
 
     @Override
-    public Page<UserMarkerEntity> getAllReports(int page, int size) {
+    public Page<UserMarkerEntity> getAllReports(int page, int size, String problemType, Instant startDate,
+                                                Instant endDate) {
         Pageable pageable = PageRequest.of(page, size);
-        return userMarkerRepository.findAll(pageable);
+        Specification<UserMarkerEntity> spec = Specification.where(EntitySpecifications.hasFieldValue(problemType))
+                .and(EntitySpecifications.hasDateBetween(startDate, endDate));
+        return userMarkerRepository.findAll(spec, pageable);
     }
 
     @Override
