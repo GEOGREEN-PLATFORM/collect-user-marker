@@ -1,5 +1,6 @@
 package com.example.collect_user_marker.service.impl;
 
+import com.example.collect_user_marker.consumer.dto.PhotoAnalyseRespDTO;
 import com.example.collect_user_marker.entity.ProblemTypeEntity;
 import com.example.collect_user_marker.entity.StatusEntity;
 import com.example.collect_user_marker.entity.UserMarkerEntity;
@@ -12,7 +13,8 @@ import com.example.collect_user_marker.feignClient.FeignClientService;
 import com.example.collect_user_marker.model.OperatorDetailsDTO;
 import com.example.collect_user_marker.model.UserMarkerDTO;
 import com.example.collect_user_marker.model.image.ImageDTO;
-import com.example.collect_user_marker.model.photoAnalyse.PhotoDTO;
+import com.example.collect_user_marker.producer.KafkaProducerService;
+import com.example.collect_user_marker.producer.dto.PhotoAnalyseReqDTO;
 import com.example.collect_user_marker.repository.ProblemTypeRepository;
 import com.example.collect_user_marker.repository.StatusRepository;
 import com.example.collect_user_marker.repository.UserMarkerRepository;
@@ -29,8 +31,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +49,9 @@ public class UserMarkerServiceImpl implements UserMarkerService {
     @Autowired
     private final FeignClientService feignClientService;
 
+    @Autowired
+    private KafkaProducerService kafkaProducerService;
+
     private static final Logger logger = LoggerFactory.getLogger(UserMarkerServiceImpl.class);
 
     @Override
@@ -55,19 +59,12 @@ public class UserMarkerServiceImpl implements UserMarkerService {
     public UserMarkerEntity saveNewReport(UserMarkerDTO userMarkerDTO, String token) {
         UserMarkerEntity userMarkerEntity = toEntity(userMarkerDTO);
 
-        List<ImageDTO> photoIds = userMarkerEntity.getImages();
-        Boolean analyseResult = false;
-
-        for (ImageDTO photo : photoIds) {
-            if (analyseResult)
-                break;
-            analyseResult = feignClientService.analyse(token, new PhotoDTO(photo.getFullImageId())).getIsHogweed();
-        }
-
-        userMarkerEntity.setPhotoVerification(analyseResult);
-
+        UserMarkerEntity result = userMarkerRepository.save(userMarkerEntity);
         logger.debug("Сохранена новая заявка: {}", userMarkerEntity);
-        return userMarkerRepository.save(userMarkerEntity);
+
+        sendPhotosToKafka(userMarkerEntity.getImages(), result.getId());
+
+        return result;
     }
 
     @Override
@@ -149,6 +146,46 @@ public class UserMarkerServiceImpl implements UserMarkerService {
         entity.setCreateDate(Instant.now());
         entity.setUpdateDate(Instant.now());
 
+        List<Integer> photoPredictions = new ArrayList<>(Arrays.asList(new Integer[dto.getDetails().getImages().size()]));
+        Collections.fill(photoPredictions, -1);
+        entity.setPhotoPredictions(photoPredictions);
+
         return entity;
+    }
+
+    private void sendPhotosToKafka(List<ImageDTO> photoIds, UUID userMarkerId) {
+        if (photoIds.size() == 0) {
+            return;
+        }
+
+        int counter = 0;
+        for (ImageDTO photo : photoIds) {
+            kafkaProducerService.sendPhoto(new PhotoAnalyseReqDTO(userMarkerId, counter, photo.getFullImageId()));
+            logger.info("Фото {} успешно отправлено на анализ.", photo.getFullImageId());
+            counter += 1;
+        }
+    }
+
+    @Transactional
+    public void updatePhotoVerification(PhotoAnalyseRespDTO photo) {
+        UserMarkerEntity userMarker = userMarkerRepository.findById(photo.getUserMarkerId())
+                .orElseThrow(() -> new IllegalStateException("UserMarker not found with id: " + photo.getUserMarkerId()));
+
+        List<Integer> predictions = userMarker.getPhotoPredictions();
+        predictions.set(photo.getProtoPosition(), photo.getPrediction());
+
+
+        if (!predictions.contains(-1)) {
+            long countGreaterThan50 = predictions.stream()
+                    .filter(Objects::nonNull)
+                    .filter(num -> num >= 65)
+                    .count();
+            userMarker.setPhotoVerification(countGreaterThan50 > predictions.size() / 2);
+        }
+
+        userMarker.setPhotoPredictions(predictions);
+
+        userMarkerRepository.save(userMarker);
+
     }
 }

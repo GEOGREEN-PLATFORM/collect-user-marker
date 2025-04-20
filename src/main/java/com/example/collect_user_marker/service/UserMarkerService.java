@@ -1,5 +1,6 @@
 package com.example.collect_user_marker.service;
 
+import com.example.collect_user_marker.consumer.dto.PhotoAnalyseRespDTO;
 import com.example.collect_user_marker.entity.UserMarkerEntity;
 import com.example.collect_user_marker.model.OperatorDetailsDTO;
 import com.example.collect_user_marker.model.UserMarkerDTO;
@@ -17,4 +18,6 @@ public interface UserMarkerService {
     UserMarkerEntity getReportById(UUID id);
 
     UserMarkerEntity updateReport(OperatorDetailsDTO operatorDetailsDTO, UUID id);
+
+    void updatePhotoVerification(PhotoAnalyseRespDTO photo);
 }

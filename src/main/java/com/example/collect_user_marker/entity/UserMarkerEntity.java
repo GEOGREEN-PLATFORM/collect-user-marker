@@ -56,6 +56,10 @@ public class UserMarkerEntity {
     @Column(name = "photo_verification")
     private boolean photoVerification;
 
+    @NotNull
+    @Column(name = "photo_predictions")
+    private List<Integer> photoPredictions;
+
     @Column(name = "update_date")
     private Instant updateDate;
 

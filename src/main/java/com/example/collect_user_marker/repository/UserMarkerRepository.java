@@ -30,4 +30,13 @@ public interface UserMarkerRepository extends JpaRepository<UserMarkerEntity, UU
     @NotNull
     Page<UserMarkerEntity> findAll(@NotNull Pageable pageable);
 
+    @Modifying
+    @Query(value = "UPDATE user_markers SET photo_predictions = jsonb_set(" +
+            "photo_predictions::jsonb, " +
+            "array[?2::text], " +
+            "to_jsonb(?3)) " +
+            "WHERE id = ?1", nativeQuery = true)
+    @Transactional
+    void updateListElement(UUID id, int index, int newValue);
+
 }
