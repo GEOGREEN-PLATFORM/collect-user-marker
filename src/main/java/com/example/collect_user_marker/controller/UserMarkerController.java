@@ -4,6 +4,7 @@ import com.example.collect_user_marker.entity.UserMarkerEntity;
 import com.example.collect_user_marker.model.OperatorDetailsDTO;
 import com.example.collect_user_marker.model.UserMarkerDTO;
 import com.example.collect_user_marker.service.UserMarkerService;
+import com.example.collect_user_marker.util.pagination.SimplifiedPageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -49,10 +50,11 @@ public class UserMarkerController {
             description = "Позволяет получить все пользовательские маркеры"
     )
     @RolesAllowed({ADMIN, OPERATOR})
-    public Page<UserMarkerEntity> getAllReports(@RequestParam(defaultValue = "0") int page,
+    public SimplifiedPageResponse<UserMarkerEntity> getAllReports(@RequestParam(defaultValue = "0") int page,
                                                 @RequestParam(defaultValue = "10") int size){
         logger.info("Получен запрос /getAll");
-        return userMarkerService.getAllReports(page, size);
+        Page<UserMarkerEntity> result = userMarkerService.getAllReports(page, size);
+        return new SimplifiedPageResponse<>(result);
     }
 
     @GetMapping("/{reportId}")
