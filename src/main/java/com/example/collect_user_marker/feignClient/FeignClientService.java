@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-@FeignClient(name="photo-analyse", url="${photo.analyse.host}:${photo.analyse.port}")
+@FeignClient(name="photo-analyse", url="${photo.analyse.host}")
 public interface FeignClientService {
     @PostMapping("/analyse")
     PhotoResponseDTO analyse(@RequestHeader("Authorization") String token, @RequestBody PhotoDTO photoDTO);
