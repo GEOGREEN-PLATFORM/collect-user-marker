@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet logicalFilePath="remove-problem-column-from-user-markers"
+               id="remove-problem-column-from-user-markers" author="Egor">
+        <dropColumn tableName="user_markers" columnName="problem_area_type"/>
+    </changeSet>
+
+    <changeSet id="add-problem-to-entity" author="Egor">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="user_markers" columnName="problem_type"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="user_markers">
+            <column name="problem_type" type="VARCHAR(50)"/>
+        </addColumn>
+
+        <addForeignKeyConstraint
+                baseTableName="user_markers"
+                baseColumnNames="problem_type"
+                referencedTableName="problem_type"
+                referencedColumnNames="code"
+                constraintName="fk_entity_problem_type"
+                onDelete="RESTRICT"
+                onUpdate="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="add-operator-to-entity" author="Egor">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="user_markers" columnName="operator_name"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="user_markers">
+            <column name="operator_name" type="VARCHAR(50)"/>
+        </addColumn>
+
+    </changeSet>
+
+    <changeSet id="add-operator-id" author="Egor">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="user_markers" columnName="operator_id"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="user_markers">
+            <column name="operator_id" type="uuid"/>
+        </addColumn>
+
+    </changeSet>
+
+</databaseChangeLog>

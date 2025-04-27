@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+    <changeSet logicalFilePath="clear-tables" id="clear-table-statuses" author="Egor">
+        <sql>TRUNCATE TABLE status RESTART IDENTITY CASCADE;</sql>
+        <sql>TRUNCATE TABLE user_markers RESTART IDENTITY CASCADE;</sql>
+    </changeSet>
+
+    <changeSet id="add-default-status" author="Egor">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM status WHERE is_default = true
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="status">
+            <column name="code" value="Создана"/>
+            <column name="description" value="Заявка создана пользователем, отображается в списке заявок у сотрудника"/>
+            <column name="is_default" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="status">
+            <column name="code" value="Отклонена"/>
+            <column name="description" value="Заявка отклонена сотрудников, не отображается в списке, но есть в БД"/>
+            <column name="is_default" valueBoolean="false"/>
+        </insert>
+
+        <insert tableName="status">
+            <column name="code" value="Одобрена"/>
+            <column name="description" value="Заявка одобрена сотрудником, не отображается в списке, есть в БД, автоматически заявка превращается в дефолтный очаг"/>
+            <column name="is_default" valueBoolean="false"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

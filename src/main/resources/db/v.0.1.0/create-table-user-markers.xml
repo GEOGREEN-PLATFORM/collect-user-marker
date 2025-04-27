@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet logicalFilePath="modify-table-user-markers"
+               id="modify-table-user-markers" author="Egor">
+
+        <createTable tableName="user_markers">
+            <column name="id" type="uuid">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+
+            <column name="x" type="double precision">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="y" type="double precision">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="user_phone" type="varchar"/>
+
+            <column name="user_email" type="varchar"/>
+
+            <column name="user_comment" type="varchar"/>
+
+            <column name="images" type="uuid[]"/>
+
+            <column name="status" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="create_date" type="date">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="operator_comment" type="varchar"/>
+
+            <column name="photo_verification" type="boolean"/>
+
+            <column name="update_date" type="date"/>
+
+            <column name="problem_area_type" type="varchar"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

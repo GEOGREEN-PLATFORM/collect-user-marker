@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet logicalFilePath="modify-table-problem-type"
+               id="modify-table-problem-type" author="Egor">
+
+        <createTable tableName="problem_type">
+            <column name="id" type="SERIAL">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+
+            <column name="code" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <column name="description" type="VARCHAR(255)"/>
+
+            <column name="is_default" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+    </changeSet>
+
+    <changeSet id="add-default-problem-type" author="Egor">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM problem_type WHERE is_default = true
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="problem_type">
+            <column name="code" value="Не определена"/>
+            <column name="is_default" valueBoolean="true"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="add-problem-types" author="Egor">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM problem_type WHERE code IN ('Борщевик', 'Пожар', 'Свалка');
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="problem_type">
+            <column name="code" value="Борщевик"/>
+            <column name="description" value="Зона распространения борщевика"/>
+            <column name="is_default" valueBoolean="false"/>
+        </insert>
+
+        <insert tableName="problem_type">
+            <column name="code" value="Пожар"/>
+            <column name="description" value="Зона распространения лесных пожаров"/>
+            <column name="is_default" valueBoolean="false"/>
+        </insert>
+
+        <insert tableName="problem_type">
+            <column name="code" value="Свалка"/>
+            <column name="description" value="Тут мусор)"/>
+            <column name="is_default" valueBoolean="false"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
