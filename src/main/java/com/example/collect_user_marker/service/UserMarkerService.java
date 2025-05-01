@@ -17,7 +17,7 @@ public interface UserMarkerService {
 
     UserMarkerEntity getReportById(UUID id);
 
-    UserMarkerEntity updateReport(OperatorDetailsDTO operatorDetailsDTO, UUID id);
+    UserMarkerEntity updateReport(OperatorDetailsDTO operatorDetailsDTO, UUID id, String token);
 
     void updatePhotoVerification(PhotoAnalyseRespDTO photo);
 }

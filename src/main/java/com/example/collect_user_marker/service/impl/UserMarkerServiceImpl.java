@@ -9,7 +9,8 @@ import com.example.collect_user_marker.exception.custom.IncorrectDataException;
 import com.example.collect_user_marker.exception.custom.ProblemNotFoundException;
 import com.example.collect_user_marker.exception.custom.ReportNotFoundException;
 import com.example.collect_user_marker.exception.custom.StatusNotFoundException;
-import com.example.collect_user_marker.feignClient.FeignClientService;
+import com.example.collect_user_marker.feignClient.FeignClientPhotoAnalyseService;
+import com.example.collect_user_marker.feignClient.FeignClientUserService;
 import com.example.collect_user_marker.model.OperatorDetailsDTO;
 import com.example.collect_user_marker.model.UserDTO;
 import com.example.collect_user_marker.model.UserMarkerDTO;
@@ -33,7 +34,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +49,10 @@ public class UserMarkerServiceImpl implements UserMarkerService {
     private ProblemTypeRepository problemTypeRepository;
 
     @Autowired
-    private final FeignClientService feignClientService;
+    private final FeignClientPhotoAnalyseService feignClientPhotoAnalyseService;
+
+    @Autowired
+    private final FeignClientUserService feignClientUserService;
 
     @Autowired
     private KafkaProducerService kafkaProducerService;
@@ -88,7 +91,7 @@ public class UserMarkerServiceImpl implements UserMarkerService {
 
     @Override
     @Transactional
-    public UserMarkerEntity updateReport(OperatorDetailsDTO operatorDetailsDTO, UUID id) {
+    public UserMarkerEntity updateReport(OperatorDetailsDTO operatorDetailsDTO, UUID id, String token) {
         UserMarkerEntity report = getReportById(id);
         report.setUpdateDate(Instant.now());
 
@@ -104,7 +107,7 @@ public class UserMarkerServiceImpl implements UserMarkerService {
             }
         }
 
-        report.setOperator(getUserById(operatorDetailsDTO.getOperatorId()));
+        report.setOperator(getUserById(operatorDetailsDTO.getOperatorId(), token));
 
 
         userMarkerRepository.save(report);
@@ -190,15 +193,11 @@ public class UserMarkerServiceImpl implements UserMarkerService {
 
     }
 
-    private UserDTO getUserById(UUID userId) {
+    private UserDTO getUserById(UUID userId, String token) {
         // TODO запрашивать имя у Даши
         if (userId == null) {
             return null;
         }
-        return List.of(
-                new UserDTO(userId, "Иван", "Иванов", "Иванович"),
-                new UserDTO(userId, "Пётр", "Петров", "Петрович"),
-                new UserDTO(userId, "Анна", "Сидорова", "Ивановна")
-        ).get(ThreadLocalRandom.current().nextInt(3));
+        return feignClientUserService.getUserById(token, userId);
     }
 }
