@@ -14,5 +14,6 @@
     <include file="v.0.1.4/update-table-user-makers.xml" relativeToChangelogFile="true" />
     <include file="v.0.2.0/update-table-status.xml" relativeToChangelogFile="true" />
     <include file="v.0.2.0/update-table-user-makers.xml" relativeToChangelogFile="true" />
+    <include file="v.0.3.0/update-table-user-makers.xml" relativeToChangelogFile="true" />
 
 </databaseChangeLog>

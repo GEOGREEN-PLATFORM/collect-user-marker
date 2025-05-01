@@ -11,6 +11,7 @@ import com.example.collect_user_marker.exception.custom.ReportNotFoundException;
 import com.example.collect_user_marker.exception.custom.StatusNotFoundException;
 import com.example.collect_user_marker.feignClient.FeignClientService;
 import com.example.collect_user_marker.model.OperatorDetailsDTO;
+import com.example.collect_user_marker.model.UserDTO;
 import com.example.collect_user_marker.model.UserMarkerDTO;
 import com.example.collect_user_marker.model.image.ImageDTO;
 import com.example.collect_user_marker.producer.KafkaProducerService;
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @RequiredArgsConstructor
@@ -102,9 +104,8 @@ public class UserMarkerServiceImpl implements UserMarkerService {
             }
         }
 
-        report.setOperatorId(operatorDetailsDTO.getOperatorId() != null ? operatorDetailsDTO.getOperatorId() : report.getOperatorId());
-        report.setOperatorName(operatorDetailsDTO.getOperatorId() != null ? "Иванов И.И." : report.getOperatorName());
-        // TODO запрашивать имя оператора у Даши
+        report.setOperator(getUserById(operatorDetailsDTO.getOperatorId()));
+
 
         userMarkerRepository.save(report);
         logger.debug("Данные по заявке с айди {} успешно обновлены", id);
@@ -141,8 +142,7 @@ public class UserMarkerServiceImpl implements UserMarkerService {
         entity.setOperatorComment("");
         entity.setStatus(statusRepository.findDefaultStatus().getCode());
 
-        entity.setOperatorId(null);
-        entity.setOperatorName(null);
+        entity.setOperator(null);
 
         entity.setCreateDate(Instant.now());
         entity.setUpdateDate(Instant.now());
@@ -188,5 +188,17 @@ public class UserMarkerServiceImpl implements UserMarkerService {
 
         userMarkerRepository.save(userMarker);
 
+    }
+
+    private UserDTO getUserById(UUID userId) {
+        // TODO запрашивать имя у Даши
+        if (userId == null) {
+            return null;
+        }
+        return List.of(
+                new UserDTO(userId, "Иван", "Иванов", "Иванович"),
+                new UserDTO(userId, "Пётр", "Петров", "Петрович"),
+                new UserDTO(userId, "Анна", "Сидорова", "Ивановна")
+        ).get(ThreadLocalRandom.current().nextInt(3));
     }
 }
