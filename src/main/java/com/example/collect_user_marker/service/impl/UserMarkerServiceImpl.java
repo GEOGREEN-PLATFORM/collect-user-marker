@@ -194,7 +194,6 @@ public class UserMarkerServiceImpl implements UserMarkerService {
     }
 
     private UserDTO getUserById(UUID userId, String token) {
-        // TODO запрашивать имя у Даши
         if (userId == null) {
             return null;
         }

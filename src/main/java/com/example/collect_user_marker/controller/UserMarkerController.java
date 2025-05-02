@@ -24,7 +24,7 @@ import java.util.UUID;
 import static com.example.collect_user_marker.util.AuthorizationStringUtil.*;
 
 @RestController
-@RequestMapping("/report")
+@RequestMapping("/user-marker")
 @RequiredArgsConstructor
 @SecurityRequirement(name = AUTHORIZATION)
 @Tag(name = "Пользовательские маркеры", description = "Позволяет раборать с пользовательскими сообщениями")
@@ -35,7 +35,7 @@ public class UserMarkerController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserMarkerController.class);
 
-    @PostMapping
+    @PostMapping("/report")
     @Operation(
             summary = "Создание нового маркера",
             description = "Записывает в базу данных новое пользовательское сообщение"

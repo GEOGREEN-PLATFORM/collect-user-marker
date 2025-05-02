@@ -21,7 +21,7 @@ import java.util.Optional;
 import static com.example.collect_user_marker.util.AuthorizationStringUtil.*;
 
 @RestController
-@RequestMapping("/problemType")
+@RequestMapping("/user-marker/problemType")
 @RequiredArgsConstructor
 @SecurityRequirement(name = AUTHORIZATION)
 @Tag(name = "Тип проблемы", description = "Позволяет управлять типами экологических проблем")

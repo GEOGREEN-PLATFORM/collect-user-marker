@@ -10,9 +10,6 @@ import java.util.UUID;
 
 @FeignClient(name="photo-analyse", url="${photo.analyse.host}")
 public interface FeignClientPhotoAnalyseService {
-    @PostMapping("/analyse")
+    @PostMapping("/analyse/predict")
     PhotoResponseDTO analyse(@RequestHeader("Authorization") String token, @RequestBody PhotoDTO photoDTO);
-
-    @GetMapping("/user/by-id/{id}")
-    UserDTO getUserById(@RequestHeader("Authorization") String token, @PathVariable UUID id);
 }
