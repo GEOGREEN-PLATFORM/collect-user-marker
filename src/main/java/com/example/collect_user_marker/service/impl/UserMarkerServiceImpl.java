@@ -17,6 +17,7 @@ import com.example.collect_user_marker.model.UserMarkerDTO;
 import com.example.collect_user_marker.model.image.ImageDTO;
 import com.example.collect_user_marker.producer.KafkaProducerService;
 import com.example.collect_user_marker.producer.dto.PhotoAnalyseReqDTO;
+import com.example.collect_user_marker.producer.dto.UpdateElementDTO;
 import com.example.collect_user_marker.repository.ProblemTypeRepository;
 import com.example.collect_user_marker.repository.StatusRepository;
 import com.example.collect_user_marker.repository.UserMarkerRepository;
@@ -100,6 +101,11 @@ public class UserMarkerServiceImpl implements UserMarkerService {
         if (operatorDetailsDTO.getStatusCode() != null) {
             StatusEntity statusEntity = statusRepository.findByCode(operatorDetailsDTO.getStatusCode());
             if (statusEntity != null) {
+
+                if (!Objects.equals(statusEntity.getCode(), report.getStatus())) {
+                    kafkaProducerService.sendUpdate(new UpdateElementDTO(report.getId(), "USER_MARKER", statusEntity.getCode(), null));
+                }
+
                 report.setStatus(statusEntity.getCode());
             }
             else {
