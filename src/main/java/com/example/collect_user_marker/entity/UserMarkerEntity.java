@@ -1,6 +1,7 @@
 package com.example.collect_user_marker.entity;
 
 import com.example.collect_user_marker.converter.ImageListConverter;
+import com.example.collect_user_marker.model.UserDTO;
 import com.example.collect_user_marker.model.image.ImageDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -63,12 +64,9 @@ public class UserMarkerEntity {
     @Column(name = "update_date")
     private Instant updateDate;
 
-    @Column(name = "operator_name")
-    @Size(max = 50)
-    private String operatorName;
-
-    @Column(name = "operator_id")
-    private UUID operatorId;
+    @Column(name = "operator", columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
+    private UserDTO operator;
 
     @JoinColumn(name = "problem_type", referencedColumnName = "code")
     @Column(name = "problem_type")

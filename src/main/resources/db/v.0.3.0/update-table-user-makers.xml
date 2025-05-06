@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+    <changeSet id="remove-user-columns" author="Egor">
+        <sql>TRUNCATE TABLE user_markers RESTART IDENTITY CASCADE;</sql>
+
+        <dropColumn tableName="user_markers" columnName="operator_name"/>
+        <dropColumn tableName="user_markers" columnName="operator_id"/>
+    </changeSet>
+
+    <changeSet id="add-operator-column" author="Egor">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="user_markers" columnName="operator"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="user_markers">
+            <column name="operator" type="jsonb"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

@@ -21,7 +21,7 @@ import java.util.Optional;
 import static com.example.collect_user_marker.util.AuthorizationStringUtil.*;
 
 @RestController
-@RequestMapping("/status")
+@RequestMapping("/user-marker/status")
 @RequiredArgsConstructor
 @SecurityRequirement(name = AUTHORIZATION)
 @Tag(name = "Статус", description = "Позволяет управлять статусами задач")

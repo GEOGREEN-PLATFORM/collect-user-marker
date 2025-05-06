@@ -24,7 +24,7 @@ import java.util.UUID;
 import static com.example.collect_user_marker.util.AuthorizationStringUtil.*;
 
 @RestController
-@RequestMapping("/report")
+@RequestMapping("/user-marker")
 @RequiredArgsConstructor
 @SecurityRequirement(name = AUTHORIZATION)
 @Tag(name = "Пользовательские маркеры", description = "Позволяет раборать с пользовательскими сообщениями")
@@ -35,7 +35,7 @@ public class UserMarkerController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserMarkerController.class);
 
-    @PostMapping
+    @PostMapping("/report")
     @Operation(
             summary = "Создание нового маркера",
             description = "Записывает в базу данных новое пользовательское сообщение"
@@ -80,9 +80,9 @@ public class UserMarkerController {
             description = "Позволяет обновить информацио о маркере"
     )
     @RolesAllowed({ADMIN, OPERATOR})
-    public UserMarkerEntity updateReport(@RequestBody @Parameter(description = "статуса сообщения пользователя", required = true) OperatorDetailsDTO operatorDetailsDTO, @PathVariable @Parameter(description = "Айди пользовательского маркера", required = true, example = "7632b748-02bf-444b-bb95-1a4e6e1cffc5") String reportId){
+    public UserMarkerEntity updateReport(@RequestHeader("Authorization") String token, @RequestBody @Parameter(description = "статуса сообщения пользователя", required = true) OperatorDetailsDTO operatorDetailsDTO, @PathVariable @Parameter(description = "Айди пользовательского маркера", required = true, example = "7632b748-02bf-444b-bb95-1a4e6e1cffc5") String reportId){
         logger.info("Получен запрос PUT /{reportId} с айди: {}", reportId);
         logger.debug("PUT /{reportId}: {}", operatorDetailsDTO);
-        return userMarkerService.updateReport(operatorDetailsDTO, UUID.fromString(reportId));
+        return userMarkerService.updateReport(operatorDetailsDTO, UUID.fromString(reportId), token);
     }
 }

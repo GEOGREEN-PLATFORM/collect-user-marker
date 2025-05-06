@@ -9,8 +9,10 @@ import com.example.collect_user_marker.exception.custom.IncorrectDataException;
 import com.example.collect_user_marker.exception.custom.ProblemNotFoundException;
 import com.example.collect_user_marker.exception.custom.ReportNotFoundException;
 import com.example.collect_user_marker.exception.custom.StatusNotFoundException;
-import com.example.collect_user_marker.feignClient.FeignClientService;
+import com.example.collect_user_marker.feignClient.FeignClientPhotoAnalyseService;
+import com.example.collect_user_marker.feignClient.FeignClientUserService;
 import com.example.collect_user_marker.model.OperatorDetailsDTO;
+import com.example.collect_user_marker.model.UserDTO;
 import com.example.collect_user_marker.model.UserMarkerDTO;
 import com.example.collect_user_marker.model.image.ImageDTO;
 import com.example.collect_user_marker.producer.KafkaProducerService;
@@ -47,7 +49,10 @@ public class UserMarkerServiceImpl implements UserMarkerService {
     private ProblemTypeRepository problemTypeRepository;
 
     @Autowired
-    private final FeignClientService feignClientService;
+    private final FeignClientPhotoAnalyseService feignClientPhotoAnalyseService;
+
+    @Autowired
+    private final FeignClientUserService feignClientUserService;
 
     @Autowired
     private KafkaProducerService kafkaProducerService;
@@ -62,7 +67,8 @@ public class UserMarkerServiceImpl implements UserMarkerService {
         UserMarkerEntity result = userMarkerRepository.save(userMarkerEntity);
         logger.debug("Сохранена новая заявка: {}", userMarkerEntity);
 
-        sendPhotosToKafka(userMarkerEntity.getImages(), result.getId());
+        if (Objects.equals(result.getProblemAreaType(), "Борщевик"))
+            sendPhotosToKafka(userMarkerEntity.getImages(), result.getId());
 
         return result;
     }
@@ -85,7 +91,7 @@ public class UserMarkerServiceImpl implements UserMarkerService {
 
     @Override
     @Transactional
-    public UserMarkerEntity updateReport(OperatorDetailsDTO operatorDetailsDTO, UUID id) {
+    public UserMarkerEntity updateReport(OperatorDetailsDTO operatorDetailsDTO, UUID id, String token) {
         UserMarkerEntity report = getReportById(id);
         report.setUpdateDate(Instant.now());
 
@@ -101,9 +107,8 @@ public class UserMarkerServiceImpl implements UserMarkerService {
             }
         }
 
-        report.setOperatorId(operatorDetailsDTO.getOperatorId() != null ? operatorDetailsDTO.getOperatorId() : report.getOperatorId());
-        report.setOperatorName(operatorDetailsDTO.getOperatorId() != null ? "Иванов И.И." : report.getOperatorName());
-        // TODO запрашивать имя оператора у Даши
+        report.setOperator(getUserById(operatorDetailsDTO.getOperatorId(), token));
+
 
         userMarkerRepository.save(report);
         logger.debug("Данные по заявке с айди {} успешно обновлены", id);
@@ -140,8 +145,7 @@ public class UserMarkerServiceImpl implements UserMarkerService {
         entity.setOperatorComment("");
         entity.setStatus(statusRepository.findDefaultStatus().getCode());
 
-        entity.setOperatorId(null);
-        entity.setOperatorName(null);
+        entity.setOperator(null);
 
         entity.setCreateDate(Instant.now());
         entity.setUpdateDate(Instant.now());
@@ -187,5 +191,12 @@ public class UserMarkerServiceImpl implements UserMarkerService {
 
         userMarkerRepository.save(userMarker);
 
+    }
+
+    private UserDTO getUserById(UUID userId, String token) {
+        if (userId == null) {
+            return null;
+        }
+        return feignClientUserService.getUserById(token, userId);
     }
 }
