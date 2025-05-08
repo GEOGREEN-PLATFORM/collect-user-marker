@@ -68,6 +68,8 @@ public class UserMarkerServiceImpl implements UserMarkerService {
         UserMarkerEntity result = userMarkerRepository.save(userMarkerEntity);
         logger.debug("Сохранена новая заявка: {}", userMarkerEntity);
 
+        kafkaProducerService.sendUpdate(new UpdateElementDTO(result.getId(), "USER_MARKER", result.getStatus(), null));
+
         if (Objects.equals(result.getProblemAreaType(), "Борщевик"))
             sendPhotosToKafka(userMarkerEntity.getImages(), result.getId());
 
