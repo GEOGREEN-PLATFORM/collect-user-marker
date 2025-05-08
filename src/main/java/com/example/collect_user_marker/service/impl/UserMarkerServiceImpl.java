@@ -5,10 +5,7 @@ import com.example.collect_user_marker.entity.ProblemTypeEntity;
 import com.example.collect_user_marker.entity.StatusEntity;
 import com.example.collect_user_marker.entity.UserMarkerEntity;
 import com.example.collect_user_marker.entity.spec.EntitySpecifications;
-import com.example.collect_user_marker.exception.custom.IncorrectDataException;
-import com.example.collect_user_marker.exception.custom.ProblemNotFoundException;
-import com.example.collect_user_marker.exception.custom.ReportNotFoundException;
-import com.example.collect_user_marker.exception.custom.StatusNotFoundException;
+import com.example.collect_user_marker.exception.custom.*;
 import com.example.collect_user_marker.feignClient.FeignClientPhotoAnalyseService;
 import com.example.collect_user_marker.feignClient.FeignClientUserService;
 import com.example.collect_user_marker.model.OperatorDetailsDTO;
@@ -33,8 +30,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
 import java.time.Instant;
 import java.util.*;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -135,6 +134,11 @@ public class UserMarkerServiceImpl implements UserMarkerService {
 
         try {
             entity.setUserComment(dto.getDetails().getComment() != null ? dto.getDetails().getComment() : "");
+
+            if (dto.getDetails().getImages() != null & dto.getDetails().getImages().size() > 10) {
+                throw new ImageLimitExceededException();
+            }
+
             entity.setImages(dto.getDetails().getImages() != null ? dto.getDetails().getImages() : List.of());
             entity.setUserId(dto.getDetails().getUserId());
 

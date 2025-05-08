@@ -67,4 +67,13 @@ public class GlobalExceptionHandler {
                 e.getMessage()), HttpStatus.NOT_FOUND
         );
     }
+
+    @ExceptionHandler({ ImageLimitExceededException.class })
+    public ResponseEntity<ResponseDTO> catchImageLimitExceededException(ImageLimitExceededException e) {
+        logger.error("Произошла ошибка: {}", e.getMessage(), e);
+        return new ResponseEntity<>(new ResponseDTO(
+                HttpStatus.BAD_REQUEST,
+                e.getMessage()), HttpStatus.BAD_REQUEST
+        );
+    }
 }
