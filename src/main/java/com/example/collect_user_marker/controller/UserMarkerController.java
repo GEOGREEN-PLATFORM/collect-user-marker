@@ -40,6 +40,7 @@ public class UserMarkerController {
             summary = "Создание нового маркера",
             description = "Записывает в базу данных новое пользовательское сообщение"
     )
+    @RolesAllowed({USER})
     public UserMarkerEntity saveNewReport(@RequestHeader("Authorization") String token, @RequestBody @Parameter(description = "Сущность пользовательского маркера", required = true) UserMarkerDTO userMarkerDTO) {
         logger.info("Получен запрос POST /report по координатам: {}, {}", userMarkerDTO.getCoordinate().get(0), userMarkerDTO.getCoordinate().get(1));
         logger.debug("POST /report: {}", userMarkerDTO);
