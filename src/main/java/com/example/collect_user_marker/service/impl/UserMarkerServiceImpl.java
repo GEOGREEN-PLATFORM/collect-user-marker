@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -60,6 +61,7 @@ public class UserMarkerServiceImpl implements UserMarkerService {
     private final JwtParserUtil jwtParserUtil;
 
     private static final Logger logger = LoggerFactory.getLogger(UserMarkerServiceImpl.class);
+    private final List<String> validSortFields = Arrays.asList("createDate", "updateDate", "problemAreaType", "status");
 
     @Override
     @Transactional
@@ -79,8 +81,12 @@ public class UserMarkerServiceImpl implements UserMarkerService {
 
     @Override
     public Page<UserMarkerEntity> getAllReports(String token, int page, int size, String problemType, Instant startDate,
-                                                Instant endDate) {
-        Pageable pageable = PageRequest.of(page, size);
+                                                Instant endDate, String sortField, Sort.Direction sortDirection) {
+        if (!validSortFields.contains(sortField)) {
+            sortField = "updateDate";
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortField));
         Specification<UserMarkerEntity> spec = Specification.where(EntitySpecifications.hasFieldValue(problemType))
                 .and(EntitySpecifications.hasDateBetween(startDate, endDate));
         if (Objects.equals(jwtParserUtil.extractRoleFromJwt(token), "user")) {

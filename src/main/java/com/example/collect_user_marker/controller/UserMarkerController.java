@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,9 +59,11 @@ public class UserMarkerController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Instant startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Instant endDate,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size){
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "updateDate") String sortField,
+            @RequestParam(defaultValue = "DESC") Sort.Direction sortDirection){
         logger.info("Получен запрос /getAll");
-        Page<UserMarkerEntity> result = userMarkerService.getAllReports(token, page, size, problemType, startDate, endDate);
+        Page<UserMarkerEntity> result = userMarkerService.getAllReports(token, page, size, problemType, startDate, endDate, sortField, sortDirection);
         return new SimplifiedPageResponse<>(result);
     }
 
