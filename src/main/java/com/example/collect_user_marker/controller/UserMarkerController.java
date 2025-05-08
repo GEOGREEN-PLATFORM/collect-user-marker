@@ -52,15 +52,15 @@ public class UserMarkerController {
             summary = "Получить все маркеры",
             description = "Позволяет получить все пользовательские маркеры"
     )
-    @RolesAllowed({ADMIN, OPERATOR})
     public SimplifiedPageResponse<UserMarkerEntity> getAllReports(
+            @RequestHeader("Authorization") String token,
             @RequestParam(required = false) String problemType,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Instant startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Instant endDate,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size){
         logger.info("Получен запрос /getAll");
-        Page<UserMarkerEntity> result = userMarkerService.getAllReports(page, size, problemType, startDate, endDate);
+        Page<UserMarkerEntity> result = userMarkerService.getAllReports(token, page, size, problemType, startDate, endDate);
         return new SimplifiedPageResponse<>(result);
     }
 

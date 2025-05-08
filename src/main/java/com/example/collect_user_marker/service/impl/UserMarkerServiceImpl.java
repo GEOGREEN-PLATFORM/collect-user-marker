@@ -19,6 +19,7 @@ import com.example.collect_user_marker.repository.ProblemTypeRepository;
 import com.example.collect_user_marker.repository.StatusRepository;
 import com.example.collect_user_marker.repository.UserMarkerRepository;
 import com.example.collect_user_marker.service.UserMarkerService;
+import com.example.collect_user_marker.util.JwtParserUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -30,7 +31,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.awt.*;
 import java.time.Instant;
 import java.util.*;
 import java.util.List;
@@ -57,6 +57,8 @@ public class UserMarkerServiceImpl implements UserMarkerService {
     @Autowired
     private KafkaProducerService kafkaProducerService;
 
+    private final JwtParserUtil jwtParserUtil;
+
     private static final Logger logger = LoggerFactory.getLogger(UserMarkerServiceImpl.class);
 
     @Override
@@ -76,13 +78,19 @@ public class UserMarkerServiceImpl implements UserMarkerService {
     }
 
     @Override
-    public Page<UserMarkerEntity> getAllReports(int page, int size, String problemType, Instant startDate,
+    public Page<UserMarkerEntity> getAllReports(String token, int page, int size, String problemType, Instant startDate,
                                                 Instant endDate) {
         Pageable pageable = PageRequest.of(page, size);
         Specification<UserMarkerEntity> spec = Specification.where(EntitySpecifications.hasFieldValue(problemType))
                 .and(EntitySpecifications.hasDateBetween(startDate, endDate));
+        if (Objects.equals(jwtParserUtil.extractRoleFromJwt(token), "user")) {
+            UUID userId = feignClientUserService.getUserByEmail(token, jwtParserUtil.extractEmailFromJwt(token)).getId();
+            logger.info("{}", userId);
+            return userMarkerRepository.findByUserId(spec, pageable, userId);
+        }
         return userMarkerRepository.findAll(spec, pageable);
     }
+
 
     @Override
     public UserMarkerEntity getReportById(UUID id) {

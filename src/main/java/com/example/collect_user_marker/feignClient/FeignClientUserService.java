@@ -12,4 +12,7 @@ import java.util.UUID;
 public interface FeignClientUserService {
     @GetMapping("/user/search/by-id/{id}")
     UserDTO getUserById(@RequestHeader("Authorization") String token, @PathVariable UUID id);
+
+    @GetMapping("/user/search/by-email/{email}")
+    UserDTO getUserByEmail(@RequestHeader("Authorization") String token, @PathVariable String email);
 }

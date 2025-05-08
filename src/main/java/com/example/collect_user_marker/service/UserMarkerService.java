@@ -13,7 +13,7 @@ public interface UserMarkerService {
 
     UserMarkerEntity saveNewReport(UserMarkerDTO userMarkerDTO, String token);
 
-    Page<UserMarkerEntity> getAllReports(int page, int size, String problemType, Instant startDate, Instant endDate);
+    Page<UserMarkerEntity> getAllReports(String token, int page, int size, String problemType, Instant startDate, Instant endDate);
 
     UserMarkerEntity getReportById(UUID id);
 
