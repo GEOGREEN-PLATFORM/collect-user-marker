@@ -2,6 +2,7 @@ package com.example.collect_user_marker.producer;
 
 import com.example.collect_user_marker.producer.dto.PhotoAnalyseReqDTO;
 import com.example.collect_user_marker.producer.dto.UpdateElementDTO;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +10,9 @@ import org.springframework.stereotype.Service;
 public class KafkaProducerService {
     private final KafkaTemplate<String, PhotoAnalyseReqDTO> kafkaTemplate;
     private final KafkaTemplate<String, UpdateElementDTO> kafkaUpdateTemplate;
+
+    @Value("${kafka.update.topic}")
+    private String updateTopic;
 
     public KafkaProducerService(KafkaTemplate<String, PhotoAnalyseReqDTO> kafkaTemplate,
                                 KafkaTemplate<String, UpdateElementDTO> kafkaUpdateTemplate) {
@@ -21,6 +25,6 @@ public class KafkaProducerService {
     }
 
     public void sendUpdate(UpdateElementDTO update) {
-        kafkaUpdateTemplate.send("update-element", update);
+        kafkaUpdateTemplate.send("updateTopic", update);
     }
 }
