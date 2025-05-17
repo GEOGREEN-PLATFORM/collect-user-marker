@@ -72,7 +72,7 @@ public class UserMarkerController {
             summary = "Получить маркер по айди",
             description = "Позволяет получить маркер по айди"
     )
-    @RolesAllowed({ADMIN, OPERATOR})
+    @RolesAllowed({USER, ADMIN, OPERATOR})
     public UserMarkerEntity getReportById(@PathVariable @Parameter(description = "Айди пользовательского маркера", required = true, example = "7632b748-02bf-444b-bb95-1a4e6e1cffc5") UUID reportId){
         logger.info("Получен запрос GET /{reportId} с айди: {}", reportId);
         return userMarkerService.getReportById(reportId);
