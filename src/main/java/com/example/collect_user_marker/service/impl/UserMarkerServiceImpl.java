@@ -5,10 +5,7 @@ import com.example.collect_user_marker.entity.ProblemTypeEntity;
 import com.example.collect_user_marker.entity.StatusEntity;
 import com.example.collect_user_marker.entity.UserMarkerEntity;
 import com.example.collect_user_marker.entity.spec.EntitySpecifications;
-import com.example.collect_user_marker.exception.custom.IncorrectDataException;
-import com.example.collect_user_marker.exception.custom.ProblemNotFoundException;
-import com.example.collect_user_marker.exception.custom.ReportNotFoundException;
-import com.example.collect_user_marker.exception.custom.StatusNotFoundException;
+import com.example.collect_user_marker.exception.custom.*;
 import com.example.collect_user_marker.feignClient.FeignClientPhotoAnalyseService;
 import com.example.collect_user_marker.feignClient.FeignClientUserService;
 import com.example.collect_user_marker.model.OperatorDetailsDTO;
@@ -17,10 +14,12 @@ import com.example.collect_user_marker.model.UserMarkerDTO;
 import com.example.collect_user_marker.model.image.ImageDTO;
 import com.example.collect_user_marker.producer.KafkaProducerService;
 import com.example.collect_user_marker.producer.dto.PhotoAnalyseReqDTO;
+import com.example.collect_user_marker.producer.dto.UpdateElementDTO;
 import com.example.collect_user_marker.repository.ProblemTypeRepository;
 import com.example.collect_user_marker.repository.StatusRepository;
 import com.example.collect_user_marker.repository.UserMarkerRepository;
 import com.example.collect_user_marker.service.UserMarkerService;
+import com.example.collect_user_marker.util.JwtParserUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -29,11 +28,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -57,7 +58,10 @@ public class UserMarkerServiceImpl implements UserMarkerService {
     @Autowired
     private KafkaProducerService kafkaProducerService;
 
+    private final JwtParserUtil jwtParserUtil;
+
     private static final Logger logger = LoggerFactory.getLogger(UserMarkerServiceImpl.class);
+    private final List<String> validSortFields = Arrays.asList("createDate", "updateDate", "problemAreaType", "status");
 
     @Override
     @Transactional
@@ -67,6 +71,8 @@ public class UserMarkerServiceImpl implements UserMarkerService {
         UserMarkerEntity result = userMarkerRepository.save(userMarkerEntity);
         logger.debug("Сохранена новая заявка: {}", userMarkerEntity);
 
+        kafkaProducerService.sendUpdate(new UpdateElementDTO(result.getId(), "Заявка", result.getStatus(), null));
+
         if (Objects.equals(result.getProblemAreaType(), "Борщевик"))
             sendPhotosToKafka(userMarkerEntity.getImages(), result.getId());
 
@@ -74,13 +80,23 @@ public class UserMarkerServiceImpl implements UserMarkerService {
     }
 
     @Override
-    public Page<UserMarkerEntity> getAllReports(int page, int size, String problemType, Instant startDate,
-                                                Instant endDate) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<UserMarkerEntity> getAllReports(String token, int page, int size, String problemType, Instant startDate,
+                                                Instant endDate, String sortField, Sort.Direction sortDirection) {
+        if (!validSortFields.contains(sortField)) {
+            sortField = "updateDate";
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortField));
         Specification<UserMarkerEntity> spec = Specification.where(EntitySpecifications.hasFieldValue(problemType))
                 .and(EntitySpecifications.hasDateBetween(startDate, endDate));
+        if (Objects.equals(jwtParserUtil.extractRoleFromJwt(token), "user")) {
+            UUID userId = feignClientUserService.getUserByEmail(token, jwtParserUtil.extractEmailFromJwt(token)).getId();
+            logger.info("{}", userId);
+            return userMarkerRepository.findByUserId(spec, pageable, userId);
+        }
         return userMarkerRepository.findAll(spec, pageable);
     }
+
 
     @Override
     public UserMarkerEntity getReportById(UUID id) {
@@ -100,6 +116,11 @@ public class UserMarkerServiceImpl implements UserMarkerService {
         if (operatorDetailsDTO.getStatusCode() != null) {
             StatusEntity statusEntity = statusRepository.findByCode(operatorDetailsDTO.getStatusCode());
             if (statusEntity != null) {
+
+                if (!Objects.equals(statusEntity.getCode(), report.getStatus())) {
+                    kafkaProducerService.sendUpdate(new UpdateElementDTO(report.getId(), "USER_MARKER", statusEntity.getCode(), null));
+                }
+
                 report.setStatus(statusEntity.getCode());
             }
             else {
@@ -127,6 +148,11 @@ public class UserMarkerServiceImpl implements UserMarkerService {
 
         try {
             entity.setUserComment(dto.getDetails().getComment() != null ? dto.getDetails().getComment() : "");
+
+            if (dto.getDetails().getImages() != null & dto.getDetails().getImages().size() > 10) {
+                throw new ImageLimitExceededException();
+            }
+
             entity.setImages(dto.getDetails().getImages() != null ? dto.getDetails().getImages() : List.of());
             entity.setUserId(dto.getDetails().getUserId());
 

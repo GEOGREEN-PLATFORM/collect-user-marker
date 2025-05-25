@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +41,7 @@ public class UserMarkerController {
             summary = "Создание нового маркера",
             description = "Записывает в базу данных новое пользовательское сообщение"
     )
+    @RolesAllowed({USER})
     public UserMarkerEntity saveNewReport(@RequestHeader("Authorization") String token, @RequestBody @Parameter(description = "Сущность пользовательского маркера", required = true) UserMarkerDTO userMarkerDTO) {
         logger.info("Получен запрос POST /report по координатам: {}, {}", userMarkerDTO.getCoordinate().get(0), userMarkerDTO.getCoordinate().get(1));
         logger.debug("POST /report: {}", userMarkerDTO);
@@ -51,15 +53,17 @@ public class UserMarkerController {
             summary = "Получить все маркеры",
             description = "Позволяет получить все пользовательские маркеры"
     )
-    @RolesAllowed({ADMIN, OPERATOR})
     public SimplifiedPageResponse<UserMarkerEntity> getAllReports(
+            @RequestHeader("Authorization") String token,
             @RequestParam(required = false) String problemType,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Instant startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Instant endDate,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size){
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "updateDate") String sortField,
+            @RequestParam(defaultValue = "DESC") Sort.Direction sortDirection){
         logger.info("Получен запрос /getAll");
-        Page<UserMarkerEntity> result = userMarkerService.getAllReports(page, size, problemType, startDate, endDate);
+        Page<UserMarkerEntity> result = userMarkerService.getAllReports(token, page, size, problemType, startDate, endDate, sortField, sortDirection);
         return new SimplifiedPageResponse<>(result);
     }
 
@@ -68,7 +72,7 @@ public class UserMarkerController {
             summary = "Получить маркер по айди",
             description = "Позволяет получить маркер по айди"
     )
-    @RolesAllowed({ADMIN, OPERATOR})
+    @RolesAllowed({USER, ADMIN, OPERATOR})
     public UserMarkerEntity getReportById(@PathVariable @Parameter(description = "Айди пользовательского маркера", required = true, example = "7632b748-02bf-444b-bb95-1a4e6e1cffc5") UUID reportId){
         logger.info("Получен запрос GET /{reportId} с айди: {}", reportId);
         return userMarkerService.getReportById(reportId);

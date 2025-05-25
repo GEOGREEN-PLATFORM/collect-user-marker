@@ -2,6 +2,7 @@ package com.example.collect_user_marker.configuration.kafka;
 
 import com.example.collect_user_marker.consumer.dto.PhotoAnalyseRespDTO;
 import com.example.collect_user_marker.producer.dto.PhotoAnalyseReqDTO;
+import com.example.collect_user_marker.producer.dto.UpdateElementDTO;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -62,5 +63,23 @@ public class KafkaConfig {
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(photoAnalyseRespConsumerFactory());
         return factory;
+    }
+
+    @Bean
+    public ProducerFactory<String, UpdateElementDTO> producerUpdateFactory() {
+        Map<String, Object> config = new HashMap<>();
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+
+        JsonSerializer<UpdateElementDTO> serializer = new JsonSerializer<>();
+        serializer.setAddTypeInfo(false);
+
+        return new DefaultKafkaProducerFactory<>(config, new StringSerializer(), serializer);
+    }
+
+    @Bean
+    public KafkaTemplate<String, UpdateElementDTO> kafkaUpdateTemplate() {
+        return new KafkaTemplate<>(producerUpdateFactory());
     }
 }

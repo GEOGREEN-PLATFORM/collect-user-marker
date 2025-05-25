@@ -1,9 +1,10 @@
 package com.example.collect_user_marker.repository;
 
 import com.example.collect_user_marker.entity.UserMarkerEntity;
-import jakarta.validation.constraints.NotNull;
+import feign.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -26,10 +27,6 @@ public interface UserMarkerRepository extends JpaRepository<UserMarkerEntity, UU
     @Query("UPDATE UserMarkerEntity u SET u.problemAreaType = :newProblem WHERE u.problemAreaType = :oldProblem")
     int updateProblemForMarkers(String oldProblem, String newProblem);
 
-    @Override
-    @NotNull
-    Page<UserMarkerEntity> findAll(@NotNull Pageable pageable);
-
     @Modifying
     @Query(value = "UPDATE user_markers SET photo_predictions = jsonb_set(" +
             "photo_predictions::jsonb, " +
@@ -39,4 +36,10 @@ public interface UserMarkerRepository extends JpaRepository<UserMarkerEntity, UU
     @Transactional
     void updateListElement(UUID id, int index, int newValue);
 
+    @Query("SELECT m FROM UserMarkerEntity m WHERE m.userId = :userId")
+    Page<UserMarkerEntity> findByUserId(
+            Specification<UserMarkerEntity> spec,
+            Pageable pageable,
+            @Param("userId") UUID userId
+    );
 }
