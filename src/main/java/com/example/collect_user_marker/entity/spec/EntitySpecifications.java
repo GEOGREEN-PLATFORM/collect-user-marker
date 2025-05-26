@@ -22,4 +22,13 @@ public class EntitySpecifications {
             return criteriaBuilder.between(root.get("createDate"), startDate, endDate);
         };
     }
+
+    public static Specification<UserMarkerEntity> hasStatusValue(String fieldValue) {
+        return (root, query, criteriaBuilder) -> {
+            if (fieldValue == null || fieldValue.isEmpty()) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.equal(root.get("status"), fieldValue);
+        };
+    }
 }

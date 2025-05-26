@@ -104,7 +104,7 @@ class UserMarkerServiceImplTest {
 
         when(userMarkerRepository.findByUserId(any(), any(), eq(userId))).thenReturn(page);
 
-        var result = service.getAllReports("Bearer token", 0, 10, null, null, null, "date", Sort.Direction.DESC);
+        var result = service.getAllReports("Bearer token", 0, 10, null, null, null, null, "date", Sort.Direction.DESC);
 
         assertThat(result.getContent()).hasSize(1);
         verify(userMarkerRepository).findByUserId(any(), any(), eq(userId));

@@ -82,7 +82,7 @@ class UserMarkerControllerTest {
 
         Page<UserMarkerEntity> mockedPage = new PageImpl<>(List.of(marker1, marker2));
 
-        when(userMarkerService.getAllReports(anyString(), anyInt(), anyInt(), nullable(String.class), nullable(Instant.class), nullable(Instant.class), anyString(), any(Sort.Direction.class))).thenReturn(mockedPage);
+        when(userMarkerService.getAllReports(anyString(), anyInt(), anyInt(), nullable(String.class), nullable(String.class), nullable(Instant.class), nullable(Instant.class), anyString(), any(Sort.Direction.class))).thenReturn(mockedPage);
 
         mockMvc.perform(get("/user-marker/getAll")
                         .header("Authorization", "Bearer token"))

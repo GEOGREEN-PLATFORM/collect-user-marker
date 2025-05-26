@@ -56,6 +56,7 @@ public class UserMarkerController {
     public SimplifiedPageResponse<UserMarkerEntity> getAllReports(
             @RequestHeader("Authorization") String token,
             @RequestParam(required = false) String problemType,
+            @RequestParam(required = false) String status,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Instant startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Instant endDate,
             @RequestParam(defaultValue = "0") int page,
@@ -63,7 +64,7 @@ public class UserMarkerController {
             @RequestParam(defaultValue = "updateDate") String sortField,
             @RequestParam(defaultValue = "DESC") Sort.Direction sortDirection){
         logger.info("Получен запрос /getAll");
-        Page<UserMarkerEntity> result = userMarkerService.getAllReports(token, page, size, problemType, startDate, endDate, sortField, sortDirection);
+        Page<UserMarkerEntity> result = userMarkerService.getAllReports(token, page, size, problemType, status, startDate, endDate, sortField, sortDirection);
         return new SimplifiedPageResponse<>(result);
     }
 

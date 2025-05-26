@@ -79,7 +79,7 @@ public class UserMarkerServiceImpl implements UserMarkerService {
     }
 
     @Override
-    public Page<UserMarkerEntity> getAllReports(String token, int page, int size, String problemType, Instant startDate,
+    public Page<UserMarkerEntity> getAllReports(String token, int page, int size, String problemType, String status, Instant startDate,
                                                 Instant endDate, String sortField, Sort.Direction sortDirection) {
         if (!validSortFields.contains(sortField)) {
             sortField = "updateDate";
@@ -87,7 +87,7 @@ public class UserMarkerServiceImpl implements UserMarkerService {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortField));
         Specification<UserMarkerEntity> spec = Specification.where(EntitySpecifications.hasFieldValue(problemType))
-                .and(EntitySpecifications.hasDateBetween(startDate, endDate));
+                .and(EntitySpecifications.hasDateBetween(startDate, endDate)).and(EntitySpecifications.hasStatusValue(status));
         if (Objects.equals(jwtParserUtil.extractRoleFromJwt(token), "user")) {
             UUID userId = feignClientUserService.getUserByEmail(token, jwtParserUtil.extractEmailFromJwt(token)).getId();
             logger.info("{}", userId);
