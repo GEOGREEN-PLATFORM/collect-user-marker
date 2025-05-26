@@ -35,8 +35,9 @@ class KafkaProducerServiceTest {
     @DisplayName("sendUpdate should send message to 'updateTopic'")
     void testSendUpdate() {
         UpdateElementDTO dto = new UpdateElementDTO();
+        kafkaProducerService.updateTopic = "update-element";
         kafkaProducerService.sendUpdate(dto);
 
-        verify(kafkaUpdateTemplate, times(1)).send("updateTopic", dto);
+        verify(kafkaUpdateTemplate, times(1)).send("update-element", dto);
     }
 }

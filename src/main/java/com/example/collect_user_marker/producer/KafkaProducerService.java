@@ -17,7 +17,7 @@ public class KafkaProducerService {
 
 
     @Value("${kafka.update.topic}")
-    private String updateTopic;
+    protected String updateTopic;
 
     public KafkaProducerService(KafkaTemplate<String, PhotoAnalyseReqDTO> kafkaTemplate,
                                 KafkaTemplate<String, UpdateElementDTO> kafkaUpdateTemplate) {
