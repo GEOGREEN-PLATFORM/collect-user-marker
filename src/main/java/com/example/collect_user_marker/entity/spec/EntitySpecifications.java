@@ -3,6 +3,7 @@ package com.example.collect_user_marker.entity.spec;
 import com.example.collect_user_marker.entity.UserMarkerEntity;
 import org.springframework.data.jpa.domain.Specification;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 public class EntitySpecifications {
     public static Specification<UserMarkerEntity> hasFieldValue(String fieldValue) {
@@ -19,7 +20,13 @@ public class EntitySpecifications {
             if (startDate == null || endDate == null) {
                 return criteriaBuilder.conjunction();
             }
-            return criteriaBuilder.between(root.get("createDate"), startDate, endDate);
+
+            Instant adjustedEndDate = endDate;
+            if (startDate.equals(adjustedEndDate)) {
+                adjustedEndDate = adjustedEndDate.plus(24, ChronoUnit.HOURS);
+            }
+
+            return criteriaBuilder.between(root.get("createDate"), startDate, adjustedEndDate);
         };
     }
 
