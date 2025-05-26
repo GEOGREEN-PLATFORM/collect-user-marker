@@ -68,7 +68,7 @@ public class UserMarkerServiceImpl implements UserMarkerService {
         UserMarkerEntity userMarkerEntity = toEntity(userMarkerDTO);
 
         UserMarkerEntity result = userMarkerRepository.save(userMarkerEntity);
-        logger.debug("Сохранена новая заявка: {}", userMarkerEntity);
+        logger.info("Сохранена новая заявка: {}", userMarkerEntity);
 
         kafkaProducerService.sendUpdate(new UpdateElementDTO(result.getId(), "Заявка", result.getStatus(), null));
 
