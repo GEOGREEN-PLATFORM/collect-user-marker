@@ -34,20 +34,19 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.*;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class UserMarkerServiceImpl implements UserMarkerService {
 
     @Autowired
-    private UserMarkerRepository userMarkerRepository;
+    private final UserMarkerRepository userMarkerRepository;
 
     @Autowired
-    private StatusRepository statusRepository;
+    private final StatusRepository statusRepository;
 
     @Autowired
-    private ProblemTypeRepository problemTypeRepository;
+    private final ProblemTypeRepository problemTypeRepository;
 
     @Autowired
     private final FeignClientPhotoAnalyseService feignClientPhotoAnalyseService;
@@ -56,7 +55,7 @@ public class UserMarkerServiceImpl implements UserMarkerService {
     private final FeignClientUserService feignClientUserService;
 
     @Autowired
-    private KafkaProducerService kafkaProducerService;
+    private final KafkaProducerService kafkaProducerService;
 
     private final JwtParserUtil jwtParserUtil;
 

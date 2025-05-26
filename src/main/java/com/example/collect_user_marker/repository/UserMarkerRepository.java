@@ -27,15 +27,6 @@ public interface UserMarkerRepository extends JpaRepository<UserMarkerEntity, UU
     @Query("UPDATE UserMarkerEntity u SET u.problemAreaType = :newProblem WHERE u.problemAreaType = :oldProblem")
     int updateProblemForMarkers(String oldProblem, String newProblem);
 
-    @Modifying
-    @Query(value = "UPDATE user_markers SET photo_predictions = jsonb_set(" +
-            "photo_predictions::jsonb, " +
-            "array[?2::text], " +
-            "to_jsonb(?3)) " +
-            "WHERE id = ?1", nativeQuery = true)
-    @Transactional
-    void updateListElement(UUID id, int index, int newValue);
-
     @Query("SELECT m FROM UserMarkerEntity m WHERE m.userId = :userId")
     Page<UserMarkerEntity> findByUserId(
             Specification<UserMarkerEntity> spec,
