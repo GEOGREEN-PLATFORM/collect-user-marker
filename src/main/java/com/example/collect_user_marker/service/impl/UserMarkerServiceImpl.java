@@ -6,11 +6,14 @@ import com.example.collect_user_marker.entity.StatusEntity;
 import com.example.collect_user_marker.entity.UserMarkerEntity;
 import com.example.collect_user_marker.entity.spec.EntitySpecifications;
 import com.example.collect_user_marker.exception.custom.*;
+import com.example.collect_user_marker.feignClient.FeignClientGeoMarkerService;
 import com.example.collect_user_marker.feignClient.FeignClientPhotoAnalyseService;
 import com.example.collect_user_marker.feignClient.FeignClientUserService;
 import com.example.collect_user_marker.model.OperatorDetailsDTO;
 import com.example.collect_user_marker.model.UserDTO;
 import com.example.collect_user_marker.model.UserMarkerDTO;
+import com.example.collect_user_marker.model.geo.GeoDetailsDTO;
+import com.example.collect_user_marker.model.geo.GeoMarkerDTO;
 import com.example.collect_user_marker.model.image.ImageDTO;
 import com.example.collect_user_marker.producer.KafkaProducerService;
 import com.example.collect_user_marker.producer.dto.PhotoAnalyseReqDTO;
@@ -53,6 +56,9 @@ public class UserMarkerServiceImpl implements UserMarkerService {
 
     @Autowired
     private final FeignClientUserService feignClientUserService;
+
+    @Autowired
+    private final FeignClientGeoMarkerService feignClientGeoMarkerService;
 
     @Autowired
     private final KafkaProducerService kafkaProducerService;
@@ -132,6 +138,13 @@ public class UserMarkerServiceImpl implements UserMarkerService {
 
         userMarkerRepository.save(report);
         logger.debug("Данные по заявке с айди {} успешно обновлены", id);
+
+        if (Objects.equals(report.getStatus(), "Одобрена")) {
+            GeoMarkerDTO geoMarkerDTO = new GeoMarkerDTO(report.getCoordinates(), new GeoDetailsDTO("-",
+                    "-", "Создано", report.getImages(), report.getProblemAreaType(),
+                    report.getOperatorComment()));
+            feignClientGeoMarkerService.postGeoPointById(token, geoMarkerDTO);
+        }
 
         return report;
     }

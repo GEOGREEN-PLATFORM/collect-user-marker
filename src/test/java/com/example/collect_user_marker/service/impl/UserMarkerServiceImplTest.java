@@ -3,6 +3,7 @@ package com.example.collect_user_marker.service.impl;
 import com.example.collect_user_marker.consumer.dto.PhotoAnalyseRespDTO;
 import com.example.collect_user_marker.entity.*;
 import com.example.collect_user_marker.exception.custom.*;
+import com.example.collect_user_marker.feignClient.FeignClientGeoMarkerService;
 import com.example.collect_user_marker.feignClient.FeignClientPhotoAnalyseService;
 import com.example.collect_user_marker.feignClient.FeignClientUserService;
 import com.example.collect_user_marker.model.*;
@@ -30,6 +31,7 @@ class UserMarkerServiceImplTest {
     private ProblemTypeRepository problemTypeRepository;
     private FeignClientPhotoAnalyseService feignClientPhotoAnalyseService;
     private FeignClientUserService feignClientUserService;
+    private FeignClientGeoMarkerService feignClientGeoMarkerService;
     private KafkaProducerService kafkaProducerService;
     private JwtParserUtil jwtParserUtil;
 
@@ -42,11 +44,12 @@ class UserMarkerServiceImplTest {
         problemTypeRepository = mock(ProblemTypeRepository.class);
         feignClientPhotoAnalyseService = mock(FeignClientPhotoAnalyseService.class);
         feignClientUserService = mock(FeignClientUserService.class);
+        feignClientGeoMarkerService = mock(FeignClientGeoMarkerService.class);
         kafkaProducerService = mock(KafkaProducerService.class);
         jwtParserUtil = mock(JwtParserUtil.class);
 
         service = new UserMarkerServiceImpl(userMarkerRepository, statusRepository, problemTypeRepository,
-                feignClientPhotoAnalyseService, feignClientUserService, kafkaProducerService, jwtParserUtil);
+                feignClientPhotoAnalyseService, feignClientUserService, feignClientGeoMarkerService, kafkaProducerService, jwtParserUtil);
     }
 
     @Test
