@@ -28,7 +28,7 @@
 	</scm>
 	<properties>
 		<java.version>17</java.version>
-		<collect-user-marker.version>0.5.8</collect-user-marker.version>
+		<collect-user-marker.version>1.0.0</collect-user-marker.version>
 	</properties>
 	<dependencies>
 		<dependency>
