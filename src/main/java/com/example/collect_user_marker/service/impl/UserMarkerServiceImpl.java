@@ -6,11 +6,14 @@ import com.example.collect_user_marker.entity.StatusEntity;
 import com.example.collect_user_marker.entity.UserMarkerEntity;
 import com.example.collect_user_marker.entity.spec.EntitySpecifications;
 import com.example.collect_user_marker.exception.custom.*;
+import com.example.collect_user_marker.feignClient.FeignClientGeoMarkerService;
 import com.example.collect_user_marker.feignClient.FeignClientPhotoAnalyseService;
 import com.example.collect_user_marker.feignClient.FeignClientUserService;
 import com.example.collect_user_marker.model.OperatorDetailsDTO;
 import com.example.collect_user_marker.model.UserDTO;
 import com.example.collect_user_marker.model.UserMarkerDTO;
+import com.example.collect_user_marker.model.geo.GeoDetailsDTO;
+import com.example.collect_user_marker.model.geo.GeoMarkerDTO;
 import com.example.collect_user_marker.model.image.ImageDTO;
 import com.example.collect_user_marker.producer.KafkaProducerService;
 import com.example.collect_user_marker.producer.dto.PhotoAnalyseReqDTO;
@@ -34,20 +37,19 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.*;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class UserMarkerServiceImpl implements UserMarkerService {
 
     @Autowired
-    private UserMarkerRepository userMarkerRepository;
+    private final UserMarkerRepository userMarkerRepository;
 
     @Autowired
-    private StatusRepository statusRepository;
+    private final StatusRepository statusRepository;
 
     @Autowired
-    private ProblemTypeRepository problemTypeRepository;
+    private final ProblemTypeRepository problemTypeRepository;
 
     @Autowired
     private final FeignClientPhotoAnalyseService feignClientPhotoAnalyseService;
@@ -56,7 +58,10 @@ public class UserMarkerServiceImpl implements UserMarkerService {
     private final FeignClientUserService feignClientUserService;
 
     @Autowired
-    private KafkaProducerService kafkaProducerService;
+    private final FeignClientGeoMarkerService feignClientGeoMarkerService;
+
+    @Autowired
+    private final KafkaProducerService kafkaProducerService;
 
     private final JwtParserUtil jwtParserUtil;
 
@@ -69,7 +74,7 @@ public class UserMarkerServiceImpl implements UserMarkerService {
         UserMarkerEntity userMarkerEntity = toEntity(userMarkerDTO);
 
         UserMarkerEntity result = userMarkerRepository.save(userMarkerEntity);
-        logger.debug("Сохранена новая заявка: {}", userMarkerEntity);
+        logger.info("Сохранена новая заявка: {}", userMarkerEntity);
 
         kafkaProducerService.sendUpdate(new UpdateElementDTO(result.getId(), "Заявка", result.getStatus(), null));
 
@@ -80,7 +85,7 @@ public class UserMarkerServiceImpl implements UserMarkerService {
     }
 
     @Override
-    public Page<UserMarkerEntity> getAllReports(String token, int page, int size, String problemType, Instant startDate,
+    public Page<UserMarkerEntity> getAllReports(String token, int page, int size, String problemType, String status, Instant startDate,
                                                 Instant endDate, String sortField, Sort.Direction sortDirection) {
         if (!validSortFields.contains(sortField)) {
             sortField = "updateDate";
@@ -88,7 +93,7 @@ public class UserMarkerServiceImpl implements UserMarkerService {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortField));
         Specification<UserMarkerEntity> spec = Specification.where(EntitySpecifications.hasFieldValue(problemType))
-                .and(EntitySpecifications.hasDateBetween(startDate, endDate));
+                .and(EntitySpecifications.hasDateBetween(startDate, endDate)).and(EntitySpecifications.hasStatusValue(status));
         if (Objects.equals(jwtParserUtil.extractRoleFromJwt(token), "user")) {
             UUID userId = feignClientUserService.getUserByEmail(token, jwtParserUtil.extractEmailFromJwt(token)).getId();
             logger.info("{}", userId);
@@ -133,6 +138,13 @@ public class UserMarkerServiceImpl implements UserMarkerService {
 
         userMarkerRepository.save(report);
         logger.debug("Данные по заявке с айди {} успешно обновлены", id);
+
+        if (Objects.equals(report.getStatus(), "Одобрена")) {
+            GeoMarkerDTO geoMarkerDTO = new GeoMarkerDTO(report.getCoordinates(), new GeoDetailsDTO("-",
+                    "-", "Создано", report.getImages(), report.getProblemAreaType(),
+                    report.getOperatorComment()));
+            feignClientGeoMarkerService.postGeoPointById(token, geoMarkerDTO);
+        }
 
         return report;
     }

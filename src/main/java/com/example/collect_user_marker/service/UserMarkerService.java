@@ -14,7 +14,7 @@ public interface UserMarkerService {
 
     UserMarkerEntity saveNewReport(UserMarkerDTO userMarkerDTO, String token);
 
-    Page<UserMarkerEntity> getAllReports(String token, int page, int size, String problemType, Instant startDate, Instant endDate, String sortField, Sort.Direction sortDirection);
+    Page<UserMarkerEntity> getAllReports(String token, int page, int size, String problemType, String status, Instant startDate, Instant endDate, String sortField, Sort.Direction sortDirection);
 
     UserMarkerEntity getReportById(UUID id);
 

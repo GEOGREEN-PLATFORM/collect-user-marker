@@ -16,7 +16,7 @@ public class CustomJwtAuthenticationConverter extends JwtAuthenticationConverter
         this.setJwtGrantedAuthoritiesConverter(this::extractAuthorities);
     }
 
-    private Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {
+    protected  Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         Collection<GrantedAuthority> authorities = grantedAuthoritiesConverter.convert(jwt);
         //todo проверок сюда на то что такие поля вообще есть
