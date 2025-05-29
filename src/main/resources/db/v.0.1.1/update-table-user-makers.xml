@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet logicalFilePath="remove-status-column-from-user-markers"
+               id="remove-status-column-from-user-markers" author="Egor">
+        <dropColumn tableName="user_markers" columnName="status"/>
+    </changeSet>
+
+    <changeSet id="add-status-to-entity" author="Egor">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="user_markers" columnName="status_code"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="user_markers">
+            <column name="status_code" type="VARCHAR(50)"/>
+        </addColumn>
+
+        <addForeignKeyConstraint
+                baseTableName="user_markers"
+                baseColumnNames="status_code"
+                referencedTableName="status"
+                referencedColumnNames="code"
+                constraintName="fk_entity_status_code"
+                onDelete="RESTRICT"
+                onUpdate="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>
